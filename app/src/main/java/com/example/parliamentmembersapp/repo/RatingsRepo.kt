@@ -12,4 +12,7 @@ class RatingsRepo(private val ratingDao: RatingDao) {
     fun getAll() = ratingDao.getAll()
 
     fun getAllByPersonNumber(personNumber: Int) = ratingDao.getAllByNumber(personNumber)
+
+    fun getRatingByNumberAndAuthor(personNumber: Int, author: String) =
+        ratingDao.getRatingByNumberAndAuthor(personNumber, author)
 }

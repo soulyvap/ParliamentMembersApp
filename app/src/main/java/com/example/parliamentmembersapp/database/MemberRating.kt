@@ -3,7 +3,7 @@ package com.example.parliamentmembersapp.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
-@Entity(indices = [Index(value = ["personNumber"], unique = true)])
+@Entity(indices = [Index(value = ["personNumber", "author"], unique = true)])
 class MemberRating(
     @PrimaryKey(autoGenerate = true)
     var id: Long,
@@ -20,6 +20,9 @@ interface RatingDao {
     fun getAll(): LiveData<List<MemberRating>>
     @Query("select * from MemberRating where personNumber = :personNumber")
     fun getAllByNumber(personNumber: Int): LiveData<List<MemberRating>>
+    @Query("select * from MemberRating " +
+            "where personNumber = :personNumber and author = :author")
+    fun getRatingByNumberAndAuthor(personNumber: Int, author: String): LiveData<MemberRating>
 }
 
 

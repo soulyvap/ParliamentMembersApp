@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(entities = [Member::class, MemberComment::class, MemberRating::class],
-    version = 2, exportSchema = false )
+    version = 3, exportSchema = false )
 @TypeConverters(Converters::class)
 abstract class MemberDB: RoomDatabase() {
     abstract val memberDao: MemberDao

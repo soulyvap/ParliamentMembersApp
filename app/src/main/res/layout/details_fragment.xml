@@ -6,6 +6,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout"
+        android:background="@android:color/darker_gray"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ParliementMemberFragment">
@@ -72,12 +73,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:clickable="false"
             android:numStars="5"
             android:progressTint="#03A9F4"
             android:stepSize="1"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"
+            app:layout_constraintBottom_toTopOf="@+id/txt_averageRating"
             app:layout_constraintStart_toStartOf="@+id/txt_age"
             tools:ignore="SpeakableTextPresentCheck" />
 
@@ -85,10 +86,10 @@
             android:id="@+id/txt_averageRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/rtb_average"
-            app:layout_constraintStart_toEndOf="@+id/rtb_average"
-            app:layout_constraintTop_toTopOf="@+id/rtb_average"
+            android:layout_marginBottom="8dp"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/rtb_average"
             tools:text="(0.0 rating)" />
 
         <ScrollView
@@ -101,8 +102,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline4"
             tools:ignore="SpeakableTextPresentCheck">
-
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -121,16 +120,33 @@
                     android:layout_weight="80"
                     android:text="Rate" />
 
-                <RatingBar
-                    android:id="@+id/rtb_newRating"
-                    style="@style/Widget.AppCompat.RatingBar.Indicator"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_margin="10dp"
-                    android:layout_weight="80"
-                    android:isIndicator="false"
-                    android:numStars="5" />
+                    android:layout_margin="16dp"
+                    android:orientation="horizontal">
+
+                    <RatingBar
+                        android:id="@+id/rtb_newRating"
+                        style="@style/Widget.AppCompat.RatingBar.Indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:isIndicator="false"
+                        android:numStars="5" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/btn_submitRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="Submit" />
+                </LinearLayout>
 
                 <View
                     android:id="@+id/divider2"
@@ -147,13 +163,13 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_margin="16dp"
                     android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/etxt_comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
                         android:layout_weight="80"
                         android:hint="New comment"
                         android:inputType="textLongMessage"
@@ -164,7 +180,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|center_horizontal"
-                        android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:ems="5"
                         android:padding="4dp"
@@ -179,7 +194,7 @@
                     android:id="@+id/rv_comments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp" />
+                    android:layout_margin="16dp" />
 
             </LinearLayout>
         </ScrollView>

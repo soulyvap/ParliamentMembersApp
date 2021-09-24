@@ -38,7 +38,6 @@ class DetailsFragment : Fragment() {
     }
 
     private lateinit var viewModel: DetailsViewModel
-    private var refreshCount = 0
     var comments = listOf<MemberComment>()
 
     override fun onCreateView(
@@ -55,6 +54,12 @@ class DetailsFragment : Fragment() {
 
         viewModel.retrieveUsername(activity)
 
+        viewModel.getCurrentRating().observe(viewLifecycleOwner, {
+            it?.let {
+                binding.rtbNewRating.rating = it.rating.toFloat()
+            }
+        })
+
         val commentAdapter = CommentAdapter(comments)
 
         viewModel.getAllRatingsByNumber().observe(viewLifecycleOwner, {
@@ -66,10 +71,6 @@ class DetailsFragment : Fragment() {
                 binding.rtbAverage.rating = average.toFloat()
             }
         })
-
-//        binding.ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-//            viewModel.setRating(rating.toDouble())
-//        }
 
         binding.rvComments.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -98,6 +99,10 @@ class DetailsFragment : Fragment() {
             binding.txtNumberOfComments.text = txtNumberComments
             commentAdapter.updateList(it)
         })
+
+        binding.btnSubmitRating.setOnClickListener {
+            viewModel.addRating(binding.rtbNewRating.rating.toDouble())
+        }
 
         binding.btnAddComment.setOnClickListener {
             val comment = binding.etxtComment.text
@@ -175,6 +180,8 @@ class DetailsViewModel(application: Application): AndroidViewModel(application){
         rating = newRating
     }
 
+    fun getCurrentRating() = ratingRepo.getRatingByNumberAndAuthor(personNumber, author)
+
     fun retrieveUsername(activity: FragmentActivity?) {
         val sharedPref = activity?.getSharedPreferences("userPref", Context.MODE_PRIVATE)
         author = sharedPref?.getString("username", "") ?: "anonymous"
@@ -203,9 +210,9 @@ class DetailsViewModel(application: Application): AndroidViewModel(application){
 
     fun getCommentsByNumber() = commentRepo.getAllByPersonNumber(personNumber)
 
-    fun addRating(rating: MemberRating) {
+    fun addRating(rating: Double) {
         viewModelScope.launch {
-            ratingRepo.addRating(rating)
+            ratingRepo.addRating(MemberRating(0, personNumber, rating, author))
         }
     }
 
@@ -214,12 +221,4 @@ class DetailsViewModel(application: Application): AndroidViewModel(application){
     fun getAverageRating(ratings: List<MemberRating>) = ratings
         .sumOf { it.rating }
         .div(ratings.size)
-
-    override fun onCleared() {
-        super.onCleared()
-        if (ratingHasChanged) {
-            addRating(MemberRating(0, personNumber, rating, author))
-        }
-    }
-
 }
