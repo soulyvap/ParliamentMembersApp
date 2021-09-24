@@ -1,19 +1,14 @@
 package com.example.parliamentmembersapp.fragments
 
 import android.app.Application
-import android.content.Context
-import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.view.menu.MenuView
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.AndroidViewModel
@@ -23,7 +18,6 @@ import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.classes.Parties
 import com.example.parliamentmembersapp.classes.Party
 import com.example.parliamentmembersapp.databinding.PartiesFragmentBinding
-import org.w3c.dom.Text
 
 class PartiesFragment : Fragment() {
 
@@ -47,7 +41,8 @@ class PartiesFragment : Fragment() {
                         ?.navigate(R.id.action_partiesFragment_to_membersFragment, bundle)
                 }
             }
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            addItemDecoration(DividerItemDecoration(
+                context, DividerItemDecoration.VERTICAL))
         }
         return binding.root
     }
@@ -60,7 +55,7 @@ class PartyAdapter: RecyclerView.Adapter<PartyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.party_item_view, parent, false)
+            .inflate(R.layout.rv_item_view, parent, false)
         return ViewHolder(v)
     }
 
@@ -77,12 +72,16 @@ class PartyAdapter: RecyclerView.Adapter<PartyAdapter.ViewHolder>() {
 
         init {
             logo = itemView.findViewById(R.id.img_logo)
-            name = itemView.findViewById(R.id.txt_partyName)
+            name = itemView.findViewById(R.id.txt_itemName)
 
             itemView.setOnClickListener {
                 onItemClick?.invoke(parties[adapterPosition])
             }
         }
     }
+}
+
+class PartiesViewModel(application: Application) : AndroidViewModel(application) {
+
 }
 

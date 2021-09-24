@@ -1,5 +1,6 @@
 package com.example.parliamentmembersapp.api
 
+import com.example.parliamentmembersapp.database.Member
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -17,7 +18,7 @@ private val retrofit = Retrofit.Builder() // create an instance of Retrofit and 
     .build()
 interface MemberApiService {
     @GET("mps.json")
-    suspend fun getMemberRecords(): List<MemberInfo>
+    suspend fun getMemberRecords(): List<Member>
 }
 object MemberApi {
     val retrofitService : MemberApiService by lazy {

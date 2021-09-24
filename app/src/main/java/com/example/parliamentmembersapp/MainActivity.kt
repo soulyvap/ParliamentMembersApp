@@ -1,45 +1,49 @@
 package com.example.parliamentmembersapp
 
 import android.app.Application
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.example.parliamentmembersapp.database.Member
-import com.example.parliamentmembersapp.database.MemberDB
-import com.example.parliamentmembersapp.database.MemberDbUpdater
-import com.example.parliamentmembersapp.database.MyApp
+import androidx.lifecycle.*
+import com.example.parliamentmembersapp.database.*
 import com.example.parliamentmembersapp.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var binding: ActivityMainBinding
-    lateinit var updaterVM: MemberDbUpdater
-    lateinit var viewModel: MainActivityViewModel
+    private lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        updaterVM = ViewModelProvider(this).get(MemberDbUpdater::class.java)
+
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        updaterVM.memberCurrentInfo.observe(this, {
-            viewModel.updateMembers(updaterVM.getMembers())
+        viewModel.membersFromJson.observe(this, {
+            viewModel.updateDB()
         })
+
     }
 }
 
 class MainActivityViewModel(application: Application): AndroidViewModel(application) {
-    fun updateMembers(members: List<Member>) {
-        val context = getApplication<Application>().applicationContext
+
+    private val repo: MembersRepo
+    var membersFromJson: LiveData<List<Member>>
+    var membersFromDB: LiveData<List<Member>>
+    init {
+        val memberDB = MemberDB.getInstance(application).memberDao
+        repo = MembersRepo(memberDB)
+        membersFromJson = liveData { emit(repo.getAllFromJson()) }
+        membersFromDB = repo.getAllFromDB()
+    }
+
+    fun updateDB() {
         viewModelScope.launch {
-            MemberDB.getInstance(context)
-                .memberDao
-                .insertAll(members)
+            repo.updateDB()
         }
     }
 }
