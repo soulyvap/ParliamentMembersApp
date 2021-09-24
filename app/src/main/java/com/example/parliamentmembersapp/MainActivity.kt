@@ -1,14 +1,13 @@
 package com.example.parliamentmembersapp
 
 import android.app.Application
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
 import com.example.parliamentmembersapp.database.*
 import com.example.parliamentmembersapp.databinding.ActivityMainBinding
+import com.example.parliamentmembersapp.repo.MembersRepo
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {

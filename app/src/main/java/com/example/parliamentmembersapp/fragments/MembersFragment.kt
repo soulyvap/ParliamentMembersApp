@@ -22,9 +22,8 @@ import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.classes.Parties
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.database.MemberDB
-import com.example.parliamentmembersapp.database.MembersRepo
+import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
-import java.util.*
 
 class MembersFragment : Fragment() {
 
@@ -35,7 +34,6 @@ class MembersFragment : Fragment() {
     private lateinit var viewModel: MembersViewModel
     private lateinit var memberAdapter: MemberAdapter
     private var currentMembers: List<Member> = listOf()
-    private var refreshCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,10 +61,6 @@ class MembersFragment : Fragment() {
         membersLiveData.observe(viewLifecycleOwner, {
             currentMembers = it
             memberAdapter.updateMembers(currentMembers)
-            if (refreshCount > 0) Toast.makeText(activity,
-                "List updated"
-                , Toast.LENGTH_SHORT).show()
-            refreshCount++
         })
     }
 

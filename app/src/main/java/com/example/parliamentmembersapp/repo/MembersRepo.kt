@@ -1,8 +1,8 @@
-package com.example.parliamentmembersapp.database
+package com.example.parliamentmembersapp.repo
 
-import android.content.Context
-import androidx.lifecycle.LiveData
 import com.example.parliamentmembersapp.api.MemberApi
+import com.example.parliamentmembersapp.database.Member
+import com.example.parliamentmembersapp.database.MemberDao
 
 
 class MembersRepo (private val membersDao: MemberDao) {
@@ -23,4 +23,5 @@ class MembersRepo (private val membersDao: MemberDao) {
     suspend fun updateDB() {
         insertAllMembers(getAllFromJson().toSet())
     }
+
 }

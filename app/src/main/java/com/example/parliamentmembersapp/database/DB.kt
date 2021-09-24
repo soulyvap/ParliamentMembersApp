@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.parliamentmembersapp.MainActivity
-import kotlin.coroutines.coroutineContext
+import androidx.room.TypeConverters
 
-@Database(entities = [Member::class], version = 1, exportSchema = false )
+@Database(entities = [Member::class, MemberComment::class, MemberRating::class],
+    version = 2, exportSchema = false )
+@TypeConverters(Converters::class)
 abstract class MemberDB: RoomDatabase() {
     abstract val memberDao: MemberDao
+    abstract val ratingDao: RatingDao
+    abstract val commentDao: CommentDao
     companion object {
 
         @Volatile
@@ -29,6 +32,4 @@ abstract class MemberDB: RoomDatabase() {
             }
         }
     }
-
-
 }
