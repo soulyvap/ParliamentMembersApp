@@ -13,10 +13,13 @@
         <item name="android:textColor">@color/white</item>
         <item name="colorButtonNormal">@android:color/holo_blue_dark</item>
         <item name="android:editTextColor">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/black</item>
     </style>
     <style name="AppTheme.ActionBar.Transparent" parent="AppTheme">
         <item name="windowActionBarOverlay">false</item>
         <item name="colorPrimary">@android:color/holo_blue_dark</item>
+        <item name="android:actionMenuTextColor">@color/black</item>
+
     </style>
 </resources>
 

@@ -5,10 +5,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout3"
-        android:background="@android:color/darker_gray"
-
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"
+        android:background="@color/light_grey"
         tools:context=".fragments.MembersFragment">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -20,16 +20,19 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/searchView" />
+            app:layout_constraintTop_toBottomOf="@+id/searchView" >
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <SearchView
             android:id="@+id/searchView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/btn_filter"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+        </SearchView>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline3"
@@ -37,6 +40,25 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.07" />
+
+        <Spinner
+            android:id="@+id/spinner_filter"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:spinnerMode="dialog"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_filter"
+            style="@android:style/Widget.DeviceDefault.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter"
+            app:layout_constraintBottom_toBottomOf="@+id/searchView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/searchView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

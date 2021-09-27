@@ -1,14 +1,13 @@
 package com.example.parliamentmembersapp.fragments
 
 import android.app.Application
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.AndroidViewModel
@@ -44,6 +43,34 @@ class MembersFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(MembersViewModel::class.java)
 
+        val filters = arrayOf("firstname", "lastname", "age", "constituency")
+        val spinner = binding.spinnerFilter
+        val spinnerAdapter =
+            context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, filters) }
+        spinnerAdapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = spinnerAdapter
+
+        spinner.onItemSelectedListener = object :
+        AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?,
+                                        position: Int, id: Long) {
+                viewModel.members.observe(viewLifecycleOwner, { members ->
+                    var sortedList = listOf<Member>()
+                    sortedList = when (filters[position]) {
+                        "firstname" -> members.sortedBy { it.first }
+                        "lastname" -> members.sortedBy { it.last }
+                        "age" -> members.sortedByDescending { it.bornYear }
+                        else -> members.sortedBy { it.constituency }
+                    }
+                    memberAdapter.updateMembers(sortedList)
+                })
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?){}
+        }
+
+        binding.btnFilter.setOnClickListener { spinner.performClick() }
+
         setAdapter(binding)
 
         arguments?.let { bundle ->
@@ -53,6 +80,25 @@ class MembersFragment : Fragment() {
         } ?: run {
             setObserver(viewModel.members)
         }
+
+         binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+             override fun onQueryTextSubmit(query: String?): Boolean {
+                 return false
+             }
+             override fun onQueryTextChange(newText: String?): Boolean {
+                 viewModel.members.observe(viewLifecycleOwner, {
+                     if (newText.isNullOrBlank()) {
+                         memberAdapter.updateMembers(it)
+                     } else {
+                         val filteredList = it.filter { member ->
+                             member.first.lowercase().contains(newText) ||
+                                     member.last.lowercase().contains(newText) }
+                         memberAdapter.updateMembers(filteredList)
+                     }
+                 })
+                 return false
+             }
+         })
 
         return binding.root
     }
@@ -90,6 +136,7 @@ class MembersFragment : Fragment() {
 class MemberAdapter(var members: List<Member>): RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
 
     var onItemClick: ((Member) -> Unit)? = null
+    val defaultMembers = members
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
@@ -111,7 +158,7 @@ class MemberAdapter(var members: List<Member>): RecyclerView.Adapter<MemberAdapt
 
     fun updateMembers(newMembers: List<Member>) {
         members = newMembers
-        this.notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
