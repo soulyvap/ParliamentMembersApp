@@ -32,7 +32,6 @@ class UsernameActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             if (editText.text.isNotBlank()) {
                 viewModel.saveUsername(editText.text.toString(), this)
-                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             } else {
                 Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show()

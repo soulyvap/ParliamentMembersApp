@@ -40,6 +40,12 @@ class DetailsFragment : Fragment() {
     private lateinit var viewModel: DetailsViewModel
     var comments = listOf<MemberComment>()
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.retrieveUsername(activity)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
