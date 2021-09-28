@@ -41,7 +41,7 @@ class MainFragment : Fragment() {
         }
 
         binding.btnRandom.setOnClickListener {
-            viewModel.getAllMembers().observe(viewLifecycleOwner, { memberList ->
+            viewModel.members.observe(viewLifecycleOwner, { memberList ->
                 val randomPersonNumber = memberList.map { it.personNumber }.random()
                 val bundle = bundleOf("member" to randomPersonNumber)
                 view?.findNavController()
@@ -55,12 +55,6 @@ class MainFragment : Fragment() {
 
 class OptionsViewModel(application: Application): AndroidViewModel(application) {
 
-    private var membersRepo: MembersRepo
-
-    init {
-        val membersDao = MemberDB.getInstance(application).memberDao
-        membersRepo = MembersRepo(membersDao)
-    }
-
-    fun getAllMembers() = membersRepo.getAllFromDB()
+    private var membersRepo = MembersRepo
+    val members = membersRepo.membersFromDB
 }

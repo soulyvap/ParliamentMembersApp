@@ -1,7 +1,6 @@
 package com.example.parliamentmembersapp.fragments
 
 import android.app.Application
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,9 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,15 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.classes.Parties
 import com.example.parliamentmembersapp.database.Member
-import com.example.parliamentmembersapp.database.MemberDB
 import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
 
 class MembersFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = MembersFragment()
-    }
 
     private lateinit var viewModel: MembersViewModel
     private lateinit var memberAdapter: MemberAdapter
@@ -39,104 +31,85 @@ class MembersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = DataBindingUtil.inflate<MembersFragmentBinding>(
-            inflater, R.layout.members_fragment, container, false)
+            inflater, R.layout.members_fragment, container, false
+        )
 
         viewModel = ViewModelProvider(this).get(MembersViewModel::class.java)
 
-        val filters = arrayOf("firstname", "lastname", "age", "constituency")
-        val spinner = binding.spinnerFilter
-        val spinnerAdapter =
-            context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, filters) }
-        spinnerAdapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = spinnerAdapter
-
-        spinner.onItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?,
-                                        position: Int, id: Long) {
-                viewModel.members.observe(viewLifecycleOwner, { members ->
-                    var sortedList = listOf<Member>()
-                    sortedList = when (filters[position]) {
-                        "firstname" -> members.sortedBy { it.first }
-                        "lastname" -> members.sortedBy { it.last }
-                        "age" -> members.sortedByDescending { it.bornYear }
-                        else -> members.sortedBy { it.constituency }
-                    }
-                    memberAdapter.updateMembers(sortedList)
-                })
-
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?){}
+        arguments?.let { bundle ->
+            val partyName = bundle.get("party") as String
+            viewModel.setParty(partyName)
         }
-
-        binding.btnFilter.setOnClickListener { spinner.performClick() }
 
         setAdapter(binding)
 
-        arguments?.let { bundle ->
-            val partyName = bundle.get("party") as String
-            setObserver(viewModel.getMembersByParty(partyName))
+        viewModel.membersRequired.observe(viewLifecycleOwner, { initialMembers ->
 
-        } ?: run {
-            setObserver(viewModel.members)
-        }
+            val initialListSorted = viewModel.sortByFirst(initialMembers)
+            var membersDisplayed = viewModel.sortByFirst(initialMembers)
+            memberAdapter.updateMembers(membersDisplayed)
 
-         binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-             override fun onQueryTextSubmit(query: String?): Boolean {
-                 return false
-             }
-             override fun onQueryTextChange(newText: String?): Boolean {
-                 viewModel.members.observe(viewLifecycleOwner, {
-                     if (newText.isNullOrBlank()) {
-                         memberAdapter.updateMembers(it)
-                     } else {
-                         val filteredList = it.filter { member ->
-                             member.first.lowercase().contains(newText) ||
-                                     member.last.lowercase().contains(newText) }
-                         memberAdapter.updateMembers(filteredList)
-                     }
-                 })
-                 return false
-             }
-         })
+            binding.btnFilterFirst.setOnClickListener {
+                membersDisplayed = viewModel.sortByFirst(memberAdapter.members)
+                memberAdapter.updateMembers(membersDisplayed)
+            }
+
+            binding.btnFilterLast.setOnClickListener {
+                membersDisplayed = viewModel.sortByLast(memberAdapter.members)
+                memberAdapter.updateMembers(membersDisplayed)
+            }
+
+            binding.btnFilterAge.setOnClickListener {
+                membersDisplayed = viewModel.sortByAge(memberAdapter.members)
+                memberAdapter.updateMembers(membersDisplayed)
+            }
+
+            binding.btnFilterConstituency.setOnClickListener {
+                membersDisplayed = viewModel.sortByConstituency(memberAdapter.members)
+                memberAdapter.updateMembers(membersDisplayed)
+            }
+
+            binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?) = false
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText.isNullOrBlank()) {
+                        memberAdapter.updateMembers(initialListSorted)
+                    } else {
+                        val filtered = initialListSorted.filter { member ->
+                            member.first.lowercase().contains(newText.lowercase()) ||
+                                    member.last.lowercase().contains(newText.lowercase()) ||
+                                    member.constituency.lowercase().contains(newText.lowercase())
+                        }
+                        memberAdapter.updateMembers(filtered)
+                    }
+                    return false
+                }
+            })
+        })
 
         return binding.root
     }
 
-    private fun setObserver(membersLiveData: LiveData<List<Member>>) {
-        membersLiveData.observe(viewLifecycleOwner, {
-            currentMembers = it
-            memberAdapter.updateMembers(currentMembers)
-        })
-    }
-
     private fun setAdapter(binding: MembersFragmentBinding) {
 
-        memberAdapter = MemberAdapter(currentMembers ?: listOf()).apply {
+        memberAdapter = MemberAdapter(currentMembers).apply {
             onItemClick = {
                 val bundle = bundleOf("member" to it.personNumber)
                 view?.findNavController()
                     ?.navigate(R.id.action_membersFragment_to_detailsFragment, bundle)
             }
         }
-
         binding.rvMembers.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = memberAdapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    context, DividerItemDecoration.VERTICAL
-                )
-            )
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
-
 }
 
-class MemberAdapter(var members: List<Member>): RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
+class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
 
     var onItemClick: ((Member) -> Unit)? = null
-    val defaultMembers = members
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
@@ -147,10 +120,7 @@ class MemberAdapter(var members: List<Member>): RecyclerView.Adapter<MemberAdapt
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val party = Parties.list.find { it.codeName == members[position].party }
         val fullname = members[position].let { "${it.first} ${it.last}" }
-
-        party?.let {
-            holder.logo.setImageResource(it.logoId)
-        }
+        party?.let { holder.logo.setImageResource(it.logoId)}
         holder.name.text = fullname
     }
 
@@ -161,14 +131,11 @@ class MemberAdapter(var members: List<Member>): RecyclerView.Adapter<MemberAdapt
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        var logo: ImageView
-        var name: TextView
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var logo: ImageView = itemView.findViewById(R.id.img_logo)
+        var name: TextView = itemView.findViewById(R.id.txt_itemName)
 
         init {
-            logo = itemView.findViewById(R.id.img_logo)
-            name = itemView.findViewById(R.id.txt_itemName)
-
             itemView.setOnClickListener {
                 onItemClick?.invoke(members[adapterPosition])
             }
@@ -178,14 +145,25 @@ class MemberAdapter(var members: List<Member>): RecyclerView.Adapter<MemberAdapt
 
 class MembersViewModel(application: Application) : AndroidViewModel(application) {
 
-    val repo: MembersRepo
-    var members: LiveData<List<Member>>
+    private val repo = MembersRepo
+    private val allMembers = repo.membersFromDB
+    var party: String? = null
+        private set
+    private val membersByParty = Transformations.map(repo.membersFromDB)
+        { members -> members.filter { it.party == party }}
+    val membersRequired: LiveData<List<Member>>
+        get() = party?.let { membersByParty } ?: allMembers
 
-    init {
-        val membersDB = MemberDB.getInstance(application).memberDao
-        repo = MembersRepo(membersDB)
-        members = repo.getAllFromDB()
+    fun setParty(partySelected: String) {
+        party = partySelected
     }
 
-    fun getMembersByParty(party: String) = repo.getMembersByParty(party)
+    fun sortByFirst(members: List<Member>) = members.sortedBy { it.first }
+
+    fun sortByLast(members: List<Member>) = members.sortedBy { it.last }
+
+    fun sortByAge(members: List<Member>) = members.sortedByDescending { it.bornYear }
+
+    fun sortByConstituency(members: List<Member>) = members.sortedBy { it.constituency }
+
 }

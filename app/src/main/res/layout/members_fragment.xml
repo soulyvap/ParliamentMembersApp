@@ -19,8 +19,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/searchView" >
+            app:layout_constraintTop_toBottomOf="@+id/divider3">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -28,7 +29,7 @@
             android:id="@+id/searchView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/btn_filter"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -41,24 +42,71 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.07" />
 
-        <Spinner
-            android:id="@+id/spinner_filter"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:spinnerMode="dialog"
-            android:visibility="invisible"
+        <View
+            android:id="@+id/divider3"
+            style="@style/Divider"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_filterFirst" />
 
         <Button
-            android:id="@+id/btn_filter"
-            style="@android:style/Widget.DeviceDefault.Button.Borderless"
+            android:id="@+id/btn_filterFirst"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filter"
-            app:layout_constraintBottom_toBottomOf="@+id/searchView"
+            android:text="Firstname"
+            android:textAllCaps="false"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_filterLast"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+        <Button
+            android:id="@+id/btn_filterLast"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lastname"
+            android:textAllCaps="false"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_filterFirst"
+            app:layout_constraintEnd_toStartOf="@+id/btn_filterAge"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_filterFirst" />
+
+        <Button
+            android:id="@+id/btn_filterAge"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Age"
+            android:textAllCaps="false"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_filterLast"
+            app:layout_constraintEnd_toStartOf="@+id/btn_filterConstituency"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_filterLast" />
+
+        <Button
+            android:id="@+id/btn_filterConstituency"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Constituency"
+            android:textAllCaps="false"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_filterAge"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/searchView" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_filterAge" />
+
+        <View
+            android:id="@+id/divider1"
+            style="@style/Divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

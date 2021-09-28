@@ -2,7 +2,6 @@ package com.example.parliamentmembersapp.fragments
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,8 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,17 +31,15 @@ import java.util.*
 
 class DetailsFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = DetailsFragment()
-    }
-
     private lateinit var viewModel: DetailsViewModel
+    private var fragmentBinding: DetailsFragmentBinding? = null
+
     var comments = listOf<MemberComment>()
 
     override fun onResume() {
         super.onResume()
         viewModel.retrieveUsername(activity)
-
+        fragmentBinding?.rtbNewRating?.rating = 0f
     }
 
     override fun onCreateView(
@@ -55,22 +51,21 @@ class DetailsFragment : Fragment() {
 
         val binding = DataBindingUtil.inflate<DetailsFragmentBinding>(
             inflater, R.layout.details_fragment, container, false)
+        fragmentBinding = binding
 
         viewModel.setPersonNumber(arguments)
 
         viewModel.retrieveUsername(activity)
 
-        viewModel.getCurrentRating().observe(viewLifecycleOwner, {
-            it?.let {
-                binding.rtbNewRating.rating = it.rating.toFloat()
-            }
+        viewModel.currentGivenRating.observe(viewLifecycleOwner, {
+            binding.rtbNewRating.rating = it?.rating?.toFloat() ?: 0F
         })
 
         val commentAdapter = CommentAdapter(comments)
 
-        viewModel.getAllRatingsByNumber().observe(viewLifecycleOwner, {
+        viewModel.ratings.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                val average = viewModel.getAverageRating(it)
+                val average = viewModel.getAverage(it)
                 val ratingAverageTxt = "(Average rating: $average, " +
                         "Number of ratings: ${it.size})"
                 binding.txtAverageRating.text = ratingAverageTxt
@@ -88,19 +83,21 @@ class DetailsFragment : Fragment() {
             )
         }
 
-        viewModel.getMemberByNumber().observe(viewLifecycleOwner, { member ->
-            val ratingText = "Rate ${member.first}!"
-            binding.txtTitleRating.text = ratingText
-            binding.imgParty.setImageResource(viewModel.getLogoId(member))
-            binding.txtInfo.text = viewModel.getInfo(member)
-            Glide.with(this)
-                .load(viewModel.getPicUrl(member))
-                .into(binding.imgProfile)
-            binding.txtAge.text = viewModel.getAge(member)
-            binding.txtConstituency.text = viewModel.getConstituency(member)
+        viewModel.memberDisplayed.observe(viewLifecycleOwner, { member ->
+            member?.let {
+                val ratingText = "Rate ${member.first}!"
+                binding.txtTitleRating.text = ratingText
+                binding.imgParty.setImageResource(viewModel.getLogoId(member))
+                binding.txtInfo.text = viewModel.getInfo(member)
+                Glide.with(this)
+                    .load(viewModel.getPicUrl(member))
+                    .into(binding.imgProfile)
+                binding.txtAge.text = viewModel.getAge(member)
+                binding.txtConstituency.text = viewModel.getConstituency(member)
+            }
         })
 
-        viewModel.getCommentsByNumber().observe(viewLifecycleOwner, {
+        viewModel.comments.observe(viewLifecycleOwner, {
             val txtNumberComments = "Comments ${it.size}"
             binding.txtNumberOfComments.text = txtNumberComments
             commentAdapter.updateList(it)
@@ -156,75 +153,59 @@ class CommentAdapter(var comments: List<MemberComment>):
             author = itemView.findViewById(R.id.txt_author)
         }
     }
-
-
 }
 
 class DetailsViewModel(application: Application): AndroidViewModel(application){
 
-    private val memberRepo: MembersRepo
-    private val ratingRepo: RatingsRepo
-    private val commentRepo: CommentsRepo
+    private val memberRepo = MembersRepo
+    private val ratingRepo = RatingsRepo
+    private val commentRepo = CommentsRepo
     private var personNumber: Int = 0
-    private var author: String = ""
-    private var rating: Double = 0.0
-    private var ratingHasChanged = false
-
-    init {
-        val membersDB = MemberDB.getInstance(application)
-        memberRepo = MembersRepo(membersDB.memberDao)
-        ratingRepo = RatingsRepo(membersDB.ratingDao)
-        commentRepo = CommentsRepo(membersDB.commentDao)
-    }
+    private var author = ""
 
     fun setPersonNumber(arguments: Bundle?) {
         personNumber = arguments?.get("member") as Int
     }
-
-    fun setRating(newRating: Double) {
-        ratingHasChanged = true
-        rating = newRating
-    }
-
-    fun getCurrentRating() = ratingRepo.getRatingByNumberAndAuthor(personNumber, author)
 
     fun retrieveUsername(activity: FragmentActivity?) {
         val sharedPref = activity?.getSharedPreferences("userPref", Context.MODE_PRIVATE)
         author = sharedPref?.getString("username", "") ?: "anonymous"
     }
 
-    fun getMemberByNumber() =  memberRepo.getMemberByNumber(personNumber)
+    //Member LiveData
+    val memberDisplayed = Transformations.distinctUntilChanged(
+        Transformations.map(memberRepo.membersFromDB) { members ->
+        members.find { it.personNumber == personNumber }})
 
-    fun getPicUrl(member: Member) = "https://avoindata.eduskunta.fi/${member.picture}"
+    //Ratings LiveData
+    val currentGivenRating = Transformations.map(ratingRepo.ratings) { ratings ->
+        ratings.find { it.personNumber == personNumber && it.author == author } }
+    val ratings = Transformations.distinctUntilChanged(
+        Transformations.map(ratingRepo.ratings) { ratings ->
+        ratings.filter { it.personNumber == personNumber }})
+    fun getAverage(ratings: List<MemberRating>) = ratings.sumOf { it.rating } / ratings.size
+    fun addRating(rating: Double) {
+        viewModelScope.launch {
+            ratingRepo.addRating(MemberRating(0, personNumber, rating, author.toString()))
+        } }
 
-    fun getInfo(member: Member) = (if (member.minister) "Minister" else "Member Of Parliament") +
-            " ${member.first} ${member.last}"
-
-    fun getAge(member: Member) = "Age: " +
-            "${Calendar.getInstance().get(Calendar.YEAR) - member.bornYear}"
-
-    fun getLogoId(member: Member) = Parties.list.find { it.codeName == member.party }?.logoId ?: 0
-
-    fun getConstituency(member: Member) = "Constituency: ${member.constituency}"
-
+    //Comments LiveData
+    val comments = Transformations.map(commentRepo.comments) { comments ->
+        comments.filter { it.personNumber == personNumber }
+            .sortedByDescending { it.date } }
     fun addComment(comment: String) {
         viewModelScope.launch {
             commentRepo.addComment(MemberComment(0,
-                personNumber, Calendar.getInstance().time, comment, author))
-        }
-    }
+                personNumber, Calendar.getInstance().time, comment, author.toString()))
+        } }
 
-    fun getCommentsByNumber() = commentRepo.getAllByPersonNumber(personNumber)
+    //Update member info
+    fun getPicUrl(member: Member) = "https://avoindata.eduskunta.fi/${member.picture}"
+    fun getInfo(member: Member) = (if (member.minister) "Minister" else "Member Of Parliament") +
+            " ${member.first} ${member.last}"
+    fun getAge(member: Member) = "Age: " +
+            "${Calendar.getInstance().get(Calendar.YEAR) - member.bornYear}"
+    fun getLogoId(member: Member) = Parties.list.find { it.codeName == member.party }?.logoId ?: 0
+    fun getConstituency(member: Member) = "Constituency: ${member.constituency}"
 
-    fun addRating(rating: Double) {
-        viewModelScope.launch {
-            ratingRepo.addRating(MemberRating(0, personNumber, rating, author))
-        }
-    }
-
-    fun getAllRatingsByNumber() = ratingRepo.getAllByPersonNumber(personNumber)
-
-    fun getAverageRating(ratings: List<MemberRating>) = ratings
-        .sumOf { it.rating }
-        .div(ratings.size)
 }

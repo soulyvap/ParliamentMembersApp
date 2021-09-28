@@ -72,14 +72,8 @@ class MainActivity : AppCompatActivity() {
 
 class MainActivityViewModel(application: Application): AndroidViewModel(application) {
 
-    private val repo: MembersRepo
-    var membersFromJson: LiveData<List<Member>>
-
-    init {
-        val memberDB = MemberDB.getInstance(application).memberDao
-        repo = MembersRepo(memberDB)
-        membersFromJson = liveData { emit(repo.getAllFromJson()) }
-    }
+    private val repo = MembersRepo
+    var membersFromJson = liveData { emit(repo.getAllFromJson()) }
 
     fun noUsernameSet(activity: Activity?): Boolean {
         val sharedPref = activity?.getSharedPreferences("userPref", Context.MODE_PRIVATE)

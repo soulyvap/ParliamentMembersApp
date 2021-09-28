@@ -2,16 +2,14 @@ package com.example.parliamentmembersapp.repo
 
 import com.example.parliamentmembersapp.database.CommentDao
 import com.example.parliamentmembersapp.database.MemberComment
+import com.example.parliamentmembersapp.database.MemberDB
 
 
-class CommentsRepo(private val commentDao: CommentDao) {
+object CommentsRepo {
+    private val commentDao = MemberDB.getInstance().commentDao
+    val comments = commentDao.getAll()
 
     suspend fun addComment(comment: MemberComment) {
         commentDao.insertComment(comment)
     }
-
-    fun getAll() = commentDao.getAll()
-
-    fun getAllByPersonNumber(personNumber: Int) = commentDao.getAllByNumber(personNumber)
-
 }
