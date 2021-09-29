@@ -82,7 +82,8 @@ class DetailsFragment : Fragment() {
                 val ratingText = "Rate ${member.first}!"
                 binding.txtTitleRating.text = ratingText
                 binding.imgParty.setImageResource(viewModel.getLogoId(member))
-                binding.txtInfo.text = viewModel.getInfo(member)
+                binding.txtInfo.text = viewModel.getName(member)
+                binding.txtMinister.text = viewModel.getMinister(member)
                 Glide.with(this)
                     .load(viewModel.getPicUrl(member))
                     .into(binding.imgProfile)
@@ -195,14 +196,14 @@ class DetailsViewModel(application: Application): AndroidViewModel(application){
 
     //Update member info
     fun getPicUrl(member: Member) = "https://avoindata.eduskunta.fi/${member.picture}"
-    fun getInfo(member: Member) = (if (member.minister) "Minister\n" else "Member Of Parliament\n") +
-            "${member.first} ${member.last}"
-    fun getAge(member: Member) = "Age: " +
-            "${Calendar.getInstance().get(Calendar.YEAR) - member.bornYear}"
+    fun getMinister(member: Member) = if (member.minister) "Minister" else "Member Of Parliament"
+    fun getName(member: Member) = "${member.first} ${member.last}"
+    fun getAge(member: Member) = "${Calendar.getInstance().get(Calendar.YEAR) - member.bornYear}" +
+            " years old"
     fun getLogoId(member: Member): Int {
         return MyApp.appContext.resources.getIdentifier(member.party,
             "drawable", MyApp.appContext.packageName)
     }
-    fun getConstituency(member: Member) = "Constituency: ${member.constituency}"
+    fun getConstituency(member: Member) = member.constituency
 
 }

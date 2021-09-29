@@ -19,7 +19,6 @@ import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
-import com.example.parliamentmembersapp.databinding.RvCardviewMemberBinding
 import java.util.*
 
 class MembersFragment : Fragment() {
@@ -122,13 +121,13 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
         val partyLogoId = getLogoId(members[position].party)
         val minister = if (members[position].minister) "Minister" else "Member of Parliament"
         val fullname = members[position].let { "${it.first} ${it.last}" }
-        val memberInfo = "$minister $fullname"
         val age = "${Calendar.getInstance().get(Calendar.YEAR) - members[position].bornYear} " +
                 "years old"
         val picUrl = "https://avoindata.eduskunta.fi/${members[position].picture}"
         val constituency = members[position].constituency
         holder.logo.setImageResource(partyLogoId)
-        holder.name.text = memberInfo
+        holder.name.text = fullname
+        holder.position.text = minister
         holder.age.text = age
         holder.constituency.text = constituency
         Glide.with(MyApp.appContext)
@@ -152,8 +151,9 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
         var logo: ImageView = itemView.findViewById(R.id.img_logo)
         var name: TextView = itemView.findViewById(R.id.txt_itemName)
         var pic: ImageView = itemView.findViewById(R.id.img_profilePic)
+        var position: TextView = itemView.findViewById(R.id.txt_itemPosition)
         var age: TextView = itemView.findViewById(R.id.txt_itemAge)
-        var constituency: TextView = itemView.findViewById(R.id.img_itemConstituency)
+        var constituency: TextView = itemView.findViewById(R.id.txt_itemConstituency)
 
         init {
             itemView.setOnClickListener {

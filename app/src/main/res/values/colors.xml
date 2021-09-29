@@ -10,4 +10,6 @@
     <color name="light_grey">#C2C2C2</color>
     <color name="not_too_white">#F1F1F1</color>
     <color name="dark_gray">#3F3F3F</color>
+    <color name="lighter_darker_gray">#595959</color>
+    <color name="dark_blueish">#141724</color>
 </resources>

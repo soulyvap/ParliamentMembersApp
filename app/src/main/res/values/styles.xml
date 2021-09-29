@@ -18,7 +18,7 @@
     </style>
     <style name="AppTheme.ActionBar.Transparent" parent="AppTheme">
         <item name="windowActionBarOverlay">false</item>
-        <item name="colorPrimary">@android:color/holo_blue_dark</item>
+        <item name="colorPrimary">@color/dark_blueish</item>
         <item name="android:actionMenuTextColor">@color/black</item>
     </style>
     <style name="small_rounded_button">
