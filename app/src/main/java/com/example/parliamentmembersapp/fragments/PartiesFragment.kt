@@ -8,16 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.AndroidViewModel
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.*
 import com.example.parliamentmembersapp.R
-import com.example.parliamentmembersapp.classes.Parties
-import com.example.parliamentmembersapp.classes.Party
+import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.databinding.PartiesFragmentBinding
+import com.example.parliamentmembersapp.repo.MembersRepo
 
 class PartiesFragment : Fragment() {
 
@@ -32,26 +31,28 @@ class PartiesFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(PartiesViewModel::class.java)
 
-        binding.rvParties.apply {
-            layoutManager = LinearLayoutManager(activity)
-            adapter = PartyAdapter().apply {
-                onItemClick = {
-                    val bundle = bundleOf("party" to it.codeName)
-                    view?.findNavController()
-                        ?.navigate(R.id.action_partiesFragment_to_membersFragment, bundle)
+        viewModel.parties.observe(viewLifecycleOwner, { parties ->
+            binding.rvParties.apply {
+                layoutManager = LinearLayoutManager(activity)
+                adapter = PartyAdapter(parties).apply {
+                    onItemClick = {
+                        val bundle = bundleOf("party" to it)
+                        view?.findNavController()
+                            ?.navigate(R.id.action_partiesFragment_to_membersFragment, bundle)
+                    }
                 }
+//                addItemDecoration(DividerItemDecoration(
+//                    context, DividerItemDecoration.VERTICAL))
             }
-            addItemDecoration(DividerItemDecoration(
-                context, DividerItemDecoration.VERTICAL))
-        }
+        })
+
         return binding.root
     }
 }
 
-class PartyAdapter: RecyclerView.Adapter<PartyAdapter.ViewHolder>() {
+class PartyAdapter(val parties: List<String>): RecyclerView.Adapter<PartyAdapter.ViewHolder>() {
 
-    val parties = Parties.list
-    var onItemClick: ((Party) -> Unit)? = null
+    var onItemClick: ((String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
@@ -60,19 +61,21 @@ class PartyAdapter: RecyclerView.Adapter<PartyAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.logo.setImageResource(parties[position].logoId)
-        holder.name.text = parties[position].name
+        holder.logo.setImageResource(getLogoId(parties[position]))
     }
 
     override fun getItemCount() = parties.size
 
+    fun getLogoId(partyName: String): Int {
+        return MyApp.appContext.resources.getIdentifier(partyName,
+            "drawable", MyApp.appContext.packageName)
+    }
+
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var logo: ImageView
-        var name: TextView
 
         init {
-            logo = itemView.findViewById(R.id.img_logo)
-            name = itemView.findViewById(R.id.txt_itemName)
+            logo = itemView.findViewById(R.id.img_profilePic)
 
             itemView.setOnClickListener {
                 onItemClick?.invoke(parties[adapterPosition])
@@ -82,6 +85,7 @@ class PartyAdapter: RecyclerView.Adapter<PartyAdapter.ViewHolder>() {
 }
 
 class PartiesViewModel(application: Application) : AndroidViewModel(application) {
-
+    private val repo = MembersRepo
+    val parties = repo.parties
 }
 

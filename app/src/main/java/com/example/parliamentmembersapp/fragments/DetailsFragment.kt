@@ -17,10 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.parliamentmembersapp.R
-import com.example.parliamentmembersapp.classes.Parties
+import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.database.MemberComment
-import com.example.parliamentmembersapp.database.MemberDB
 import com.example.parliamentmembersapp.database.MemberRating
 import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.DetailsFragmentBinding
@@ -66,8 +65,8 @@ class DetailsFragment : Fragment() {
         viewModel.ratings.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 val average = viewModel.getAverage(it)
-                val ratingAverageTxt = "(Average rating: $average, " +
-                        "Number of ratings: ${it.size})"
+                val ratingAverageTxt = "(Average: $average, " +
+                        "${it.size} rating${if (it.size>1) "s" else ""})"
                 binding.txtAverageRating.text = ratingAverageTxt
                 binding.rtbAverage.rating = average.toFloat()
             }
@@ -76,11 +75,6 @@ class DetailsFragment : Fragment() {
         binding.rvComments.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = commentAdapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    context, DividerItemDecoration.VERTICAL
-                )
-            )
         }
 
         viewModel.memberDisplayed.observe(viewLifecycleOwner, { member ->
@@ -132,9 +126,9 @@ class CommentAdapter(var comments: List<MemberComment>):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        val authorTxt = "${comments[position].author} commented"
+        holder.author.text = authorTxt
         holder.comment.text = comments[position].comment
-        holder.author.text = comments[position].author
     }
 
     override fun getItemCount() = comments.size
@@ -201,11 +195,14 @@ class DetailsViewModel(application: Application): AndroidViewModel(application){
 
     //Update member info
     fun getPicUrl(member: Member) = "https://avoindata.eduskunta.fi/${member.picture}"
-    fun getInfo(member: Member) = (if (member.minister) "Minister" else "Member Of Parliament") +
-            " ${member.first} ${member.last}"
+    fun getInfo(member: Member) = (if (member.minister) "Minister\n" else "Member Of Parliament\n") +
+            "${member.first} ${member.last}"
     fun getAge(member: Member) = "Age: " +
             "${Calendar.getInstance().get(Calendar.YEAR) - member.bornYear}"
-    fun getLogoId(member: Member) = Parties.list.find { it.codeName == member.party }?.logoId ?: 0
+    fun getLogoId(member: Member): Int {
+        return MyApp.appContext.resources.getIdentifier(member.party,
+            "drawable", MyApp.appContext.packageName)
+    }
     fun getConstituency(member: Member) = "Constituency: ${member.constituency}"
 
 }

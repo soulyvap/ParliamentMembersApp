@@ -11,14 +11,16 @@ import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.parliamentmembersapp.R
-import com.example.parliamentmembersapp.classes.Parties
+import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
+import com.example.parliamentmembersapp.databinding.RvCardviewMemberBinding
+import java.util.*
 
 class MembersFragment : Fragment() {
 
@@ -102,7 +104,6 @@ class MembersFragment : Fragment() {
         binding.rvMembers.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = memberAdapter
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
 }
@@ -113,15 +114,26 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.rv_item_view_small, parent, false)
+            .inflate(R.layout.rv_cardview_member, parent, false)
         return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val party = Parties.list.find { it.codeName == members[position].party }
+        val partyLogoId = getLogoId(members[position].party)
+        val minister = if (members[position].minister) "Minister" else "Member of Parliament"
         val fullname = members[position].let { "${it.first} ${it.last}" }
-        party?.let { holder.logo.setImageResource(it.logoId)}
-        holder.name.text = fullname
+        val memberInfo = "$minister $fullname"
+        val age = "${Calendar.getInstance().get(Calendar.YEAR) - members[position].bornYear} " +
+                "years old"
+        val picUrl = "https://avoindata.eduskunta.fi/${members[position].picture}"
+        val constituency = members[position].constituency
+        holder.logo.setImageResource(partyLogoId)
+        holder.name.text = memberInfo
+        holder.age.text = age
+        holder.constituency.text = constituency
+        Glide.with(MyApp.appContext)
+            .load(picUrl)
+            .into(holder.pic)
     }
 
     override fun getItemCount() = members.size
@@ -131,9 +143,17 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
         notifyDataSetChanged()
     }
 
+    fun getLogoId(partyName: String): Int {
+        return MyApp.appContext.resources.getIdentifier(partyName,
+            "drawable", MyApp.appContext.packageName)
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var logo: ImageView = itemView.findViewById(R.id.img_logo)
         var name: TextView = itemView.findViewById(R.id.txt_itemName)
+        var pic: ImageView = itemView.findViewById(R.id.img_profilePic)
+        var age: TextView = itemView.findViewById(R.id.txt_itemAge)
+        var constituency: TextView = itemView.findViewById(R.id.img_itemConstituency)
 
         init {
             itemView.setOnClickListener {

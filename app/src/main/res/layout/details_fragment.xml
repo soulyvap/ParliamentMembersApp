@@ -11,54 +11,97 @@
         android:layout_height="match_parent"
         tools:context=".ParliementMemberFragment">
 
-        <TextView
-            android:id="@+id/txt_age"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/rtb_average"
-            app:layout_constraintStart_toStartOf="@+id/txt_constituency"
-            app:layout_constraintTop_toBottomOf="@+id/txt_constituency"
-            tools:text="member age" />
-
-        <TextView
-            android:id="@+id/txt_info"
+        <androidx.cardview.widget.CardView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/txt_constituency"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/img_profile"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="member info" />
-
-        <TextView
-            android:id="@+id/txt_constituency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/txt_age"
-            app:layout_constraintStart_toStartOf="@+id/txt_info"
-            app:layout_constraintTop_toBottomOf="@+id/txt_info"
-            tools:text="member constituency" />
-
-        <ImageView
-            android:id="@+id/img_profile"
-            android:layout_width="wrap_content"
             android:layout_height="0dp"
+            app:cardBackgroundColor="@color/dark_gray"
             app:layout_constraintBottom_toTopOf="@+id/guideline4"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/img_party"
-            android:layout_width="40sp"
-            android:layout_height="40dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/img_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_launcher_foreground" />
+
+                <TextView
+                    android:id="@+id/txt_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/rounded_border_dark"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/img_profile"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="member age" />
+
+                <TextView
+                    android:id="@+id/txt_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/rounded_border_dark"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txt_age"
+                    app:layout_constraintStart_toStartOf="@+id/txt_age"
+                    tools:text="member info" />
+
+                <TextView
+                    android:id="@+id/txt_constituency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/rounded_border_dark"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/txt_age"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_age"
+                    tools:text="member constituency" />
+
+                <ImageView
+                    android:id="@+id/img_party"
+                    android:layout_width="40sp"
+                    android:layout_height="40dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars" />
+
+                <RatingBar
+                    android:id="@+id/rtb_average"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:clickable="false"
+                    android:numStars="5"
+                    android:progressTint="#03A9F4"
+                    android:stepSize="0.1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/txt_constituency"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <TextView
+                    android:id="@+id/txt_averageRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rtb_average"
+                    app:layout_constraintStart_toEndOf="@+id/rtb_average"
+                    app:layout_constraintTop_toTopOf="@+id/rtb_average"
+                    tools:text="(0.0 rating)" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"
@@ -67,36 +110,11 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.33" />
 
-        <RatingBar
-            android:id="@+id/rtb_average"
-            style="@style/Widget.AppCompat.RatingBar.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="4dp"
-            android:clickable="false"
-            android:numStars="5"
-            android:progressTint="#03A9F4"
-            android:stepSize="0.1"
-            app:layout_constraintBottom_toTopOf="@+id/txt_averageRating"
-            app:layout_constraintStart_toStartOf="@+id/txt_age"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <TextView
-            android:id="@+id/txt_averageRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"
-            app:layout_constraintStart_toStartOf="@+id/rtb_average"
-            tools:text="(0.0 rating)" />
-
         <ScrollView
             android:id="@+id/scrollView2"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@android:color/holo_blue_dark"
+            android:background="@color/dark_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -116,14 +134,17 @@
                     android:id="@+id/txt_titleRating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="5sp"
+                    android:layout_marginEnd="16dp"
                     android:layout_weight="80"
                     android:text="Rate" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_marginStart="16sp"
+                    android:layout_marginEnd="16sp"
                     android:orientation="horizontal">
 
                     <RatingBar
@@ -142,6 +163,7 @@
 
                     <Button
                         android:id="@+id/btn_submitRating"
+                        style="@style/Widget.AppCompat.Button.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
@@ -156,14 +178,18 @@
                     android:id="@+id/txt_numberOfComments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_marginStart="16sp"
+                    android:layout_marginTop="5sp"
+                    android:layout_marginEnd="16sp"
                     android:layout_weight="80"
                     android:text="Comments 0" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8sp"
+                    android:layout_marginEnd="16dp"
                     android:orientation="horizontal">
 
                     <EditText
@@ -171,12 +197,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="80"
+                        android:background="@drawable/rounded_border_dark"
                         android:hint="New comment"
                         android:inputType="textLongMessage"
                         android:minHeight="48dp" />
 
                     <Button
                         android:id="@+id/btn_addComment"
+                        style="@style/Widget.AppCompat.Button.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|center_horizontal"
