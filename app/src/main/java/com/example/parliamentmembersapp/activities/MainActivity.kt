@@ -6,26 +6,20 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import androidx.navigation.NavAction
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.onNavDestinationSelected
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.database.*
 import com.example.parliamentmembersapp.databinding.ActivityMainBinding
-import com.example.parliamentmembersapp.repo.MembersRepo
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,15 +31,15 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
+        viewModel.setWorkManager(this, this)
+
         if (viewModel.noUsernameSet(this)) {
-            startActivity(Intent(this, UsernameActivity::class.java))
+            startActivity(Intent(this, WelcomeActivity::class.java))
+            finish()
         } else {
             binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
             val navController = this.findNavController(R.id.fragCont_navHost)
             NavigationUI.setupActionBarWithNavController(this, navController)
-            viewModel.membersFromJson.observe(this, {
-                viewModel.updateDB()
-            })
         }
     }
 
@@ -72,17 +66,17 @@ class MainActivity : AppCompatActivity() {
 
 class MainActivityViewModel(application: Application): AndroidViewModel(application) {
 
-    private val repo = MembersRepo
-    var membersFromJson = liveData { emit(repo.getAllFromJson()) }
-
     fun noUsernameSet(activity: Activity?): Boolean {
         val sharedPref = activity?.getSharedPreferences("userPref", Context.MODE_PRIVATE)
         return sharedPref?.getString("username", "") == ""
     }
 
-    fun updateDB() {
-        viewModelScope.launch {
-            repo.updateDB()
-        }
+    fun setWorkManager(context: Context, lifecycleOwner: LifecycleOwner) {
+        WorkManager.getInstance(context)
+            .beginUniqueWork("DBUpdater", ExistingWorkPolicy.APPEND_OR_REPLACE,
+                OneTimeWorkRequest.from(DBUpdater::class.java)
+            ).enqueue().state.observe(lifecycleOwner, Observer { state ->
+                Log.d("MainActivity", "DBUpdater: $state")
+            })
     }
 }

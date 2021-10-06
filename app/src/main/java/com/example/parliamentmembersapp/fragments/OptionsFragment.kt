@@ -12,28 +12,32 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.parliamentmembersapp.R
-import com.example.parliamentmembersapp.database.MemberDB
-import com.example.parliamentmembersapp.databinding.FragmentOptionsBinding
+import com.example.parliamentmembersapp.constants.Constants
+import com.example.parliamentmembersapp.databinding.OptionsFragmentBinding
 import com.example.parliamentmembersapp.repo.MembersRepo
 
 
-class MainFragment : Fragment() {
+class OptionsFragment : Fragment() {
 
-    lateinit var viewModel: OptionsViewModel
+    private lateinit var viewModel: OptionsViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View {
         viewModel = ViewModelProvider(this).get(OptionsViewModel::class.java)
 
-        val binding = DataBindingUtil.inflate<FragmentOptionsBinding>(
-            inflater, R.layout.fragment_options, container, false)
+        val binding = DataBindingUtil.inflate<OptionsFragmentBinding>(
+            inflater, R.layout.options_fragment, container, false)
 
         binding.btnParties.setOnClickListener {
-            view?.findNavController()?.navigate(R.id.action_mainFragment_to_partiesFragment)
+            val bundle = bundleOf(Pair(Constants.KEY_SUBGROUP, Constants.VAL_PARTIES))
+            view?.findNavController()?.navigate(
+                R.id.action_mainFragment_to_subgroupsFragment, bundle)
+        }
+
+        binding.btnConstituencies.setOnClickListener {
+            val bundle = bundleOf(Pair(Constants.KEY_SUBGROUP, Constants.VAL_CONSTITUENCIES))
+            view?.findNavController()?.navigate(
+                R.id.action_mainFragment_to_subgroupsFragment, bundle)
         }
 
         binding.btnAllMembers.setOnClickListener {
@@ -43,7 +47,7 @@ class MainFragment : Fragment() {
         binding.btnRandom.setOnClickListener {
             viewModel.members.observe(viewLifecycleOwner, { memberList ->
                 val randomPersonNumber = memberList.map { it.personNumber }.random()
-                val bundle = bundleOf("member" to randomPersonNumber)
+                val bundle = bundleOf(Constants.KEY_PERSON_NUM to randomPersonNumber)
                 view?.findNavController()
                     ?.navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
             })

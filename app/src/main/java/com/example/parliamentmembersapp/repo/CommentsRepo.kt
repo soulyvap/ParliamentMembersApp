@@ -1,6 +1,5 @@
 package com.example.parliamentmembersapp.repo
 
-import com.example.parliamentmembersapp.database.CommentDao
 import com.example.parliamentmembersapp.database.MemberComment
 import com.example.parliamentmembersapp.database.MemberDB
 

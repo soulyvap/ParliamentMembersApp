@@ -15,10 +15,11 @@
             android:id="@+id/etxt_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autofillHints="username"
             android:background="@drawable/rounded_border_dark"
             android:ems="10"
             android:gravity="center"
-            android:hint="Set username"
+            android:hint="@string/set_username"
             android:inputType="textPersonName"
             android:maxLength="20"
             android:padding="5sp"
@@ -27,7 +28,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TouchTargetSizeCheck" />
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
         <Button
             android:id="@+id/btn_save"
@@ -35,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@drawable/rounded_border_colored"
-            android:text="Save"
+            android:text="@string/save"
             app:layout_constraintEnd_toEndOf="@+id/etxt_username"
             app:layout_constraintStart_toStartOf="@+id/etxt_username"
             app:layout_constraintTop_toBottomOf="@+id/etxt_username" />
@@ -45,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="Username"
+            android:text="@string/username"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/etxt_username"
             app:layout_constraintEnd_toEndOf="@+id/etxt_username"

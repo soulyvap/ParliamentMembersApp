@@ -7,33 +7,24 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.parliamentmembersapp.fragments.MainFragment"
-        android:label="fragment_main"
-        tools:layout="@layout/fragment_options" >
-        <action
-            android:id="@+id/action_mainFragment_to_partiesFragment"
-            app:destination="@id/partiesFragment" />
+        android:name="com.example.parliamentmembersapp.fragments.OptionsFragment"
+        android:label="Parliament App"
+        tools:layout="@layout/options_fragment">
         <action
             android:id="@+id/action_mainFragment_to_membersFragment"
             app:destination="@id/membersFragment" />
         <action
             android:id="@+id/action_mainFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/partiesFragment"
-        android:name="com.example.parliamentmembersapp.fragments.PartiesFragment"
-        android:label="parties_fragment"
-        tools:layout="@layout/parties_fragment" >
         <action
-            android:id="@+id/action_partiesFragment_to_membersFragment"
-            app:destination="@id/membersFragment" />
+            android:id="@+id/action_mainFragment_to_subgroupsFragment"
+            app:destination="@id/subgroupsFragment" />
     </fragment>
     <fragment
         android:id="@+id/membersFragment"
         android:name="com.example.parliamentmembersapp.fragments.MembersFragment"
-        android:label="members_fragment"
-        tools:layout="@layout/members_fragment" >
+        android:label="Members"
+        tools:layout="@layout/members_fragment">
         <action
             android:id="@+id/action_membersFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
@@ -41,6 +32,14 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.example.parliamentmembersapp.fragments.DetailsFragment"
-        android:label="details_fragment"
-        tools:layout="@layout/details_fragment" />
+        android:label="Member Info"
+        tools:layout="@layout/details_fragment"/>
+    <fragment
+        android:id="@+id/subgroupsFragment"
+        android:name="com.example.parliamentmembersapp.fragments.SubgroupsFragment"
+        tools:layout="@layout/subgroups_fragment">
+        <action
+            android:id="@+id/action_subgroupsFragment_to_membersFragment"
+            app:destination="@id/membersFragment" />
+    </fragment>
 </navigation>

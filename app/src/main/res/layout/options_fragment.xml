@@ -8,30 +8,50 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_blueish"
-        tools:context=".fragments.MainFragment">
+        tools:context=".fragments.OptionsFragment">
 
-        <Button
-            android:id="@+id/btn_parties"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="@string/parties"
-            app:cornerRadius="0dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/btn_parties"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/lighter_darker_gray"
+                android:text="@string/parties"
+                app:cornerRadius="0dp"
+                tools:ignore="TextContrastCheck" />
+
+            <Button
+                android:id="@+id/btn_constituencies"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/lighter_darker_gray"
+                android:text="@string/constituencies"
+                tools:ignore="TextContrastCheck" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_random"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:backgroundTint="@color/teal_700"
-            android:text="Random member"
+            android:text="@string/random_member"
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline5" />
+            app:layout_constraintTop_toTopOf="@+id/guideline5"
+            tools:ignore="TextContrastCheck" />
 
         <Button
             android:id="@+id/btn_allMembers"
@@ -44,7 +64,8 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline2" />
+            app:layout_constraintTop_toTopOf="@+id/guideline2"
+            tools:ignore="TextContrastCheck" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"

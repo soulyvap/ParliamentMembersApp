@@ -1,5 +1,6 @@
 package com.example.parliamentmembersapp.fragments
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,12 +11,14 @@ import android.widget.*
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.classes.MyApp
+import com.example.parliamentmembersapp.constants.Constants
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
@@ -27,10 +30,9 @@ class MembersFragment : Fragment() {
     private lateinit var memberAdapter: MemberAdapter
     private var currentMembers: List<Member> = listOf()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View {
+
         val binding = DataBindingUtil.inflate<MembersFragmentBinding>(
             inflater, R.layout.members_fragment, container, false
         )
@@ -38,14 +40,14 @@ class MembersFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(MembersViewModel::class.java)
 
         arguments?.let { bundle ->
-            val partyName = bundle.get("party") as String
-            viewModel.setParty(partyName)
+            val subgroup = bundle.get(Constants.KEY_SUBGROUP) as String
+            val type = bundle.get(Constants.KEY_SUBGROUP_TYPE) as String
+            viewModel.setSubgroup(subgroup, type)
         }
 
         setAdapter(binding)
 
-        viewModel.membersRequired.observe(viewLifecycleOwner, { initialMembers ->
-
+        viewModel.membersRequired.observe(viewLifecycleOwner, Observer { initialMembers ->
             val initialListSorted = viewModel.sortByFirst(initialMembers)
             var membersDisplayed = viewModel.sortByFirst(initialMembers)
             memberAdapter.updateMembers(membersDisplayed)
@@ -77,9 +79,12 @@ class MembersFragment : Fragment() {
                         memberAdapter.updateMembers(initialListSorted)
                     } else {
                         val filtered = initialListSorted.filter { member ->
-                            member.first.lowercase().contains(newText.lowercase()) ||
-                                    member.last.lowercase().contains(newText.lowercase()) ||
-                                    member.constituency.lowercase().contains(newText.lowercase())
+                            member.first.lowercase().contains(newText.lowercase())
+                                    || member.last.lowercase().contains(newText.lowercase())
+                                    || member.constituency.lowercase().contains(newText.lowercase())
+                                    || member.party.lowercase().contains(newText.lowercase())
+                                    || member.bornYear == newText.toIntOrNull()
+                                    || member.seatNumber == newText.toIntOrNull()
                         }
                         memberAdapter.updateMembers(filtered)
                     }
@@ -95,7 +100,7 @@ class MembersFragment : Fragment() {
 
         memberAdapter = MemberAdapter(currentMembers).apply {
             onItemClick = {
-                val bundle = bundleOf("member" to it.personNumber)
+                val bundle = bundleOf(Constants.KEY_PERSON_NUM to it.personNumber)
                 view?.findNavController()
                     ?.navigate(R.id.action_membersFragment_to_detailsFragment, bundle)
             }
@@ -137,12 +142,13 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
 
     override fun getItemCount() = members.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateMembers(newMembers: List<Member>) {
         members = newMembers
         notifyDataSetChanged()
     }
 
-    fun getLogoId(partyName: String): Int {
+    private fun getLogoId(partyName: String): Int {
         return MyApp.appContext.resources.getIdentifier(partyName,
             "drawable", MyApp.appContext.packageName)
     }
@@ -167,15 +173,21 @@ class MembersViewModel(application: Application) : AndroidViewModel(application)
 
     private val repo = MembersRepo
     private val allMembers = repo.membersFromDB
-    var party: String? = null
-        private set
-    private val membersByParty = Transformations.map(repo.membersFromDB)
-        { members -> members.filter { it.party == party }}
+    private var subgroup: String? = null
+    private var subGroupType: String? = null
+    private val subgroupLiveData = Transformations.map(repo.membersFromDB)
+        { members -> members.filter { member ->
+            when (subGroupType) {
+                Constants.VAL_PARTIES -> member.party == subgroup
+                else -> member.constituency == subgroup
+            }
+        }}.distinctUntilChanged()
     val membersRequired: LiveData<List<Member>>
-        get() = party?.let { membersByParty } ?: allMembers
+        get() = subgroup?.let { subgroupLiveData } ?: allMembers
 
-    fun setParty(partySelected: String) {
-        party = partySelected
+    fun setSubgroup(subgroupSelected: String, type: String) {
+        subgroup = subgroupSelected
+        subGroupType = type
     }
 
     fun sortByFirst(members: List<Member>) = members.sortedBy { it.first }
@@ -185,5 +197,4 @@ class MembersViewModel(application: Application) : AndroidViewModel(application)
     fun sortByAge(members: List<Member>) = members.sortedByDescending { it.bornYear }
 
     fun sortByConstituency(members: List<Member>) = members.sortedBy { it.constituency }
-
 }

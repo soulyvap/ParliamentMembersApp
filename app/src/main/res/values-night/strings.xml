@@ -2,4 +2,25 @@
 <resources>
     <string name="parties">Parties</string>
     <string name="all_members">All members</string>
+    <string name="set_username">Set username</string>
+    <string name="save">Save</string>
+    <string name="username">Username</string>
+    <string name="age">Age</string>
+    <string name="full_name">Full name</string>
+    <string name="new_comment">New comment</string>
+    <string name="position">Position</string>
+    <string name="rating">Rating</string>
+    <string name="constituency">Constituency</string>
+    <string name="rate">Rate</string>
+    <string name="submit">Submit</string>
+    <string name="party_logo">party_logo</string>
+    <string name="profile_pic">profile_pic</string>
+    <string name="add">Add</string>
+    <string name="firstname">Firstname</string>
+    <string name="lastname">Lastname</string>
+    <string name="random_member">Random member</string>
+    <string name="constituencies">Constituencies</string>
+    <string name="welcome_to_the_parliament_app">Welcome\nto the\nParliament App</string>
+    <string name="start">Start</string>
+    <string name="parliament_house">parliament_house</string>
 </resources>

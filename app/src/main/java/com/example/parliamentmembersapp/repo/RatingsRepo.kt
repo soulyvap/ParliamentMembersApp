@@ -2,7 +2,6 @@ package com.example.parliamentmembersapp.repo
 
 import com.example.parliamentmembersapp.database.MemberDB
 import com.example.parliamentmembersapp.database.MemberRating
-import com.example.parliamentmembersapp.database.RatingDao
 
 object RatingsRepo {
     private val ratingDao = MemberDB.getInstance().ratingDao
@@ -11,5 +10,4 @@ object RatingsRepo {
     suspend fun addRating(rating: MemberRating) {
         ratingDao.insertRating(rating)
     }
-
 }

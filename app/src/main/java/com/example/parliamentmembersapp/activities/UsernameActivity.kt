@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -18,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class UsernameActivity : AppCompatActivity() {
     lateinit var binding: ActivityUsernameBinding
-    lateinit var viewModel: UsernameViewModel
+    private lateinit var viewModel: UsernameViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
