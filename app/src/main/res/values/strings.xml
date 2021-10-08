@@ -23,4 +23,12 @@
     <string name="welcome_to_the_parliament_app">Welcome\nto the\nParliament App</string>
     <string name="start">Start</string>
     <string name="parliament_house">parliament_house</string>
+    <string name="party">Party</string>
+    <string name="switch_user">Switch user</string>
+    <string name="app_description">This app allows you browse information about members of the Finnish Parliament. You can also add comments about the MPs and grade them according to their performance.</string>
+    <string name="seat_number">Seat Number</string>
+    <string name="twitter">Twitter</string>
+    <string name="order_by">Order By</string>
+    <string name="to_top">to_top</string>
+
 </resources>

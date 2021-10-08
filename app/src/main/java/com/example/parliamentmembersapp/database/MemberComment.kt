@@ -4,6 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import java.util.*
 
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Entity class that defines the properties of a Member rating in the Room MemberDB
+*/
+
 @Entity
 class MemberComment(
     @PrimaryKey(autoGenerate = true)
@@ -13,6 +20,13 @@ class MemberComment(
     val comment: String?,
     val author: String
 )
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: DAO for MemberComment instances
+*/
 
 @Dao
 interface CommentDao {

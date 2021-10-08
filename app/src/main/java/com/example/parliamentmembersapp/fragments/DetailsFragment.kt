@@ -1,85 +1,82 @@
 package com.example.parliamentmembersapp.fragments
 
-import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.parliamentmembersapp.R
-import com.example.parliamentmembersapp.activities.MainActivityViewModel
-import com.example.parliamentmembersapp.classes.MyApp
-import com.example.parliamentmembersapp.constants.Constants
+import com.example.parliamentmembersapp.adapters.CommentAdapter
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.database.MemberComment
 import com.example.parliamentmembersapp.database.MemberRating
-import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.DetailsFragmentBinding
-import com.example.parliamentmembersapp.repo.CommentsRepo
-import com.example.parliamentmembersapp.repo.RatingsRepo
-import kotlinx.coroutines.launch
-import java.util.*
+import com.example.parliamentmembersapp.viewmodels.DetailsFragmentViewModel
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Fragment that displays the detailed information of an MP. The user can also
+* rate the MP's performance or leave a comment about them.
+*/
 
 class DetailsFragment : Fragment() {
 
-    private lateinit var viewModel: DetailsViewModel
-    private lateinit var mainVM: MainActivityViewModel
+    private lateinit var viewModel: DetailsFragmentViewModel
     private var fragmentBinding: DetailsFragmentBinding? = null
-
     private var comments = listOf<MemberComment>()
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.retrieveUsername(activity)
-        fragmentBinding?.rtbNewRating?.rating = 0f
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
 
-        viewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
-        mainVM = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(DetailsFragmentViewModel::class.java)
 
         val binding = DataBindingUtil.inflate<DetailsFragmentBinding>(
             inflater, R.layout.details_fragment, container, false)
         fragmentBinding = binding
 
+        //retrieving the number of the parliament member to display
+        //and the username of the current user
         viewModel.setPersonNumber(arguments)
         viewModel.retrieveUsername(activity)
 
+        //setting up the adapter for the comments recyclerView
         val commentAdapter = CommentAdapter(comments)
         binding.rvComments.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = commentAdapter
         }
 
+        //observing the displayed member's info from the DB and updating the UI
         viewModel.memberDisplayed.observe(viewLifecycleOwner, Observer{ member ->
             member?.let { updateMemberInfo(member, binding) }
         })
 
+        //observing the displayed member's ratings and displaying their average rating
         viewModel.ratings.observe(viewLifecycleOwner, Observer{ ratings ->
             updateAverageRating(ratings, binding)
         })
 
+        //observing the displayed member's comments and updating the comments recyclerView
         viewModel.comments.observe(viewLifecycleOwner, Observer{ comments ->
             updateComments(comments, binding, commentAdapter)
         })
 
+        //adding/modifying a rating to the rating table in DB for the displayed member
+        //one user can only have one rating per member, but it can be replaced
         binding.btnSubmitRating.setOnClickListener {
             viewModel.addRating(binding.rtbNewRating.rating.toDouble())
         }
 
+        //adding a new comment for the displayed member to the DB
         binding.btnAddComment.setOnClickListener {
             val comment = binding.etxtComment.text
             addComment(comment)
@@ -88,41 +85,7 @@ class DetailsFragment : Fragment() {
         return binding.root
     }
 
-    private fun addComment(comment: Editable) {
-        if (comment.isNotEmpty()) {
-            viewModel.addComment(comment.toString())
-            comment.clear()
-        } else {
-            Toast.makeText(
-                activity, "Please enter a comment",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    private fun updateComments(
-        comments: List<MemberComment>,
-        binding: DetailsFragmentBinding,
-        commentAdapter: CommentAdapter
-    ) {
-        val txtNumberComments = "Comments ${comments.size}"
-        binding.txtNumberOfComments.text = txtNumberComments
-        commentAdapter.updateList(comments)
-    }
-
-    private fun updateAverageRating(
-        ratings: List<MemberRating>,
-        binding: DetailsFragmentBinding
-    ) {
-        if (ratings.isNotEmpty()) {
-            val average = viewModel.getAverage(ratings)
-            val ratingAverageTxt = "(Average: $average, " +
-                    "${ratings.size} rating${if (ratings.size > 1) "s" else ""})"
-            binding.txtAverageRating.text = ratingAverageTxt
-            binding.rtbAverage.rating = average.toFloat()
-        }
-    }
-
+    //updating all the member info
     private fun updateMemberInfo(member: Member, binding: DetailsFragmentBinding) {
         val ratingText = "Rate ${member.first}!"
         binding.txtTitleRating.text = ratingText
@@ -133,89 +96,48 @@ class DetailsFragment : Fragment() {
             .load(viewModel.getPicUrl(member))
             .into(binding.imgProfile)
         binding.txtAge.text = viewModel.getAge(member)
-        binding.txtConstituency.text = viewModel.getConstituency(member)
+        binding.txtConstituency.text = member.constituency
+        binding.txtSeatNumber.text = member.seatNumber.toString()
+        binding.txtTwitter.text = viewModel.getTwitter(member)
+    }
+
+    //updating the average rating and rating count of the member if there is any rating
+    private fun updateAverageRating(ratings: List<MemberRating>,
+                                    binding: DetailsFragmentBinding) {
+        if (ratings.isNotEmpty()) {
+            val average = viewModel.getAverage(ratings)
+            val ratingAverageTxt = "(Average: $average, " +
+                    "${ratings.size} rating${if (ratings.size > 1) "s" else ""})"
+            binding.txtAverageRating.text = ratingAverageTxt
+            binding.rtbAverage.rating = average.toFloat()
+        }
+    }
+
+    //checking new comment EditText for input, then adding comment to DB
+    //and clearing EditText if there is an input. displaying a toast if no input
+    private fun addComment(comment: Editable) {
+        if (comment.isNotEmpty()) {
+            viewModel.addComment(comment.toString())
+            comment.clear()
+        } else {
+            Toast.makeText(activity, "Please enter a comment",
+                Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    //updating the comments UI (number of comments and recyclerView)
+    private fun updateComments(comments: List<MemberComment>, binding: DetailsFragmentBinding,
+                               commentAdapter: CommentAdapter) {
+        val txtNumberComments = "Comments ${comments.size}"
+        binding.txtNumberOfComments.text = txtNumberComments
+        commentAdapter.updateList(comments)
+    }
+
+    //making sure username is updated in case username was switched and resetting "current rating"
+    override fun onResume() {
+        super.onResume()
+        viewModel.retrieveUsername(activity)
+        fragmentBinding?.rtbNewRating?.rating = 0f
     }
 }
 
-class CommentAdapter(private var comments: List<MemberComment>):
-    RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.rv_comment_item, parent, false)
-        return ViewHolder(v)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val authorTxt = "${comments[position].author} commented"
-        holder.author.text = authorTxt
-        holder.comment.text = comments[position].comment
-    }
-
-    override fun getItemCount() = comments.size
-
-    fun updateList(newComments: List<MemberComment>) {
-        comments = newComments
-        this.notifyItemInserted(0)
-    }
-
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        var comment: TextView = itemView.findViewById(R.id.txt_comment)
-        var author: TextView = itemView.findViewById(R.id.txt_author)
-    }
-}
-
-class DetailsViewModel(application: Application): AndroidViewModel(application){
-
-    private val memberRepo = MembersRepo
-    private val ratingRepo = RatingsRepo
-    private val commentRepo = CommentsRepo
-    private var personNumber: Int = 0
-    private var author = ""
-
-    fun setPersonNumber(arguments: Bundle?) {
-        personNumber = arguments?.get(Constants.KEY_PERSON_NUM) as Int
-    }
-
-    fun retrieveUsername(activity: FragmentActivity?) {
-        val sharedPref = activity?.getSharedPreferences("userPref", Context.MODE_PRIVATE)
-        author = sharedPref?.getString("username", "") ?: "anonymous"
-    }
-
-    //Member LiveData
-    val memberDisplayed = Transformations.map(memberRepo.membersFromDB) { members ->
-        members.find { it.personNumber == personNumber }}.distinctUntilChanged()
-
-    //Ratings LiveData
-    val ratings = Transformations.map(ratingRepo.ratings) { ratings ->
-        ratings.filter { it.personNumber == personNumber }}.distinctUntilChanged()
-    fun getAverage(ratings: List<MemberRating>) = ratings.sumOf { it.rating } / ratings.size
-    fun addRating(rating: Double) {
-        viewModelScope.launch {
-            ratingRepo.addRating(MemberRating(0, personNumber, rating, author))
-        } }
-
-    //Comments LiveData
-    val comments = Transformations.map(commentRepo.comments) { comments ->
-        comments.filter { it.personNumber == personNumber }
-            .sortedByDescending { it.date } }.distinctUntilChanged()
-    fun addComment(comment: String) {
-        viewModelScope.launch {
-            commentRepo.addComment(MemberComment(0,
-                personNumber, Calendar.getInstance().time, comment, author
-            ))
-        } }
-
-    //Update member info
-    fun getPicUrl(member: Member) = "https://avoindata.eduskunta.fi/${member.picture}"
-    fun getMinister(member: Member) = if (member.minister) "Minister" else "Member Of Parliament"
-    fun getName(member: Member) = "${member.first} ${member.last}"
-    fun getAge(member: Member) = "${Calendar.getInstance().get(Calendar.YEAR) - member.bornYear}" +
-            " years old"
-    fun getLogoId(member: Member): Int {
-        return MyApp.appContext.resources.getIdentifier(member.party,
-            "drawable", MyApp.appContext.packageName)
-    }
-    fun getConstituency(member: Member) = member.constituency
-
-}

@@ -10,6 +10,14 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.example.parliamentmembersapp.database.DBUpdater
 
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Custom application class that contains the app's context. Makes it easier to obtain
+* the app's context when it is not an activity or a fragment (e.g. create a DB instance)
+*/
+
 class MyApp: Application() {
     companion object {
         lateinit var appContext: Context

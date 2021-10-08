@@ -1,11 +1,18 @@
 package com.example.parliamentmembersapp.database
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.parliamentmembersapp.classes.MyApp
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Room database containing 3 tables: information about MP's, MP ratings and comments
+* about MP's
+*/
 
 @Database(entities = [Member::class, MemberComment::class, MemberRating::class],
     version = 3, exportSchema = false )

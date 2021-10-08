@@ -20,35 +20,50 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/txt_appDescription"
             tools:ignore="TextContrastCheck" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120sp"
+            android:layout_height="120sp"
             android:background="@drawable/rounded_border_colored_padded"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/parliament_house"
+            app:layout_constraintBottom_toTopOf="@+id/txt_appDescription"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_welcome"
             app:srcCompat="@drawable/ic_baseline_account_balance_24"
-            android:contentDescription="@string/parliament_house" />
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/txt_welcome"
             android:layout_width="379dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:text="@string/welcome_to_the_parliament_app"
             android:textAlignment="center"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_appDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:justificationMode="inter_word"
+            android:text="@string/app_description"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            tools:targetApi="o" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

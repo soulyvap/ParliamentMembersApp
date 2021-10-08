@@ -3,6 +3,13 @@ package com.example.parliamentmembersapp.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Entity class that defines the properties of a Member in the Room MemberDB
+*/
+
 @Entity
 class Member(
     @PrimaryKey
@@ -17,6 +24,13 @@ class Member(
     val bornYear: Int,
     val constituency: String
 )
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: DAO for Member instances
+*/
 
 @Dao
 interface MemberDao {

@@ -1,7 +1,14 @@
-package com.example.parliamentmembersapp.repo
+package com.example.parliamentmembersapp.repos
 
 import com.example.parliamentmembersapp.database.MemberDB
 import com.example.parliamentmembersapp.database.MemberRating
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Repository to handles queries for ratings in the MemberDB
+*/
 
 object RatingsRepo {
     private val ratingDao = MemberDB.getInstance().ratingDao

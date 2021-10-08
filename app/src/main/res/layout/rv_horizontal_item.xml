@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5sp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/light_grey"
+    app:cardCornerRadius="20sp"
+    tools:ignore="TouchTargetSizeCheck">
+
+    <TextView
+        android:id="@+id/txt_filterCriteria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5sp"
+        android:layout_marginTop="1sp"
+        android:layout_marginEnd="5sp"
+        android:layout_marginBottom="1sp"
+        android:textColor="@color/dark_blueish"
+        android:textSize="14sp"
+        tools:text="filter" />
+</androidx.cardview.widget.CardView>

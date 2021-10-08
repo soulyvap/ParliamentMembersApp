@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_blueish"
-        tools:context=".ParliementMemberFragment">
+        tools:context=".DetailsFragment">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -44,43 +44,30 @@
                     android:contentDescription="@string/party_logo"
                     app:layout_constraintBottom_toBottomOf="@id/img_profile"
                     app:layout_constraintEnd_toEndOf="@+id/img_profile"
+                    tools:ignore="ImageContrastCheck"
                     tools:src="@tools:sample/avatars" />
 
                 <View
+                    android:id="@+id/view6"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginEnd="8dp"
                     android:background="@android:color/holo_blue_dark"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/txt_info"
+                    app:layout_constraintEnd_toStartOf="@+id/txt_constituency"
                     app:layout_constraintStart_toEndOf="@+id/img_profile"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/txt_ageTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/age"
-                    android:textColor="@color/not_too_white"
-                    android:textColorHighlight="@color/not_too_white"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/txt_constituencyTitle"
-                    app:layout_constraintStart_toStartOf="@+id/txt_positionTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_positionTitle"
-                    tools:ignore="TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/txt_fullnameTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:text="@string/full_name"
                     android:textColor="@color/not_too_white"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/txt_positionTitle"
-                    app:layout_constraintStart_toEndOf="@+id/img_profile"
+                    app:layout_constraintStart_toStartOf="@+id/txt_positionTitle"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="TextContrastCheck" />
 
@@ -94,21 +81,22 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/txt_ageTitle"
-                    app:layout_constraintStart_toStartOf="@+id/txt_fullnameTitle"
+                    app:layout_constraintStart_toStartOf="@+id/txt_ageTitle"
                     app:layout_constraintTop_toBottomOf="@+id/txt_fullnameTitle"
                     tools:ignore="TextContrastCheck" />
 
                 <TextView
-                    android:id="@+id/txt_ratingTitle"
+                    android:id="@+id/txt_ageTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/rating"
+                    android:text="@string/age"
                     android:textColor="@color/not_too_white"
+                    android:textColorHighlight="@color/not_too_white"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/txt_constituencyTitle"
                     app:layout_constraintStart_toStartOf="@+id/txt_constituencyTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_constituencyTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_positionTitle"
                     tools:ignore="TextContrastCheck" />
 
                 <TextView
@@ -119,9 +107,48 @@
                     android:textColor="@color/not_too_white"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/txt_ratingTitle"
-                    app:layout_constraintStart_toStartOf="@+id/txt_ageTitle"
+                    app:layout_constraintBottom_toTopOf="@+id/txt_seatTitle"
+                    app:layout_constraintStart_toStartOf="@+id/txt_seatTitle"
                     app:layout_constraintTop_toBottomOf="@+id/txt_ageTitle"
+                    tools:ignore="TextContrastCheck" />
+
+                <TextView
+                    android:id="@+id/txt_seatTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/seat_number"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/txt_twitterTitle"
+                    app:layout_constraintStart_toStartOf="@+id/txt_twitterTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_constituencyTitle"
+                    tools:ignore="TextContrastCheck" />
+
+                <TextView
+                    android:id="@+id/txt_twitterTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/twitter"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/txt_ratingTitle"
+                    app:layout_constraintStart_toStartOf="@+id/txt_ratingTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_seatTitle"
+                    tools:ignore="TextContrastCheck" />
+
+                <TextView
+                    android:id="@+id/txt_ratingTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/rating"
+                    android:textColor="@color/not_too_white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/img_profile"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_twitterTitle"
                     tools:ignore="TextContrastCheck" />
 
                 <TextView
@@ -140,9 +167,10 @@
                     android:id="@+id/txt_minister"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_positionTitle"
-                    app:layout_constraintEnd_toEndOf="@+id/txt_info"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/txt_info"
                     tools:text="@string/position" />
 
@@ -150,9 +178,10 @@
                     android:id="@+id/txt_age"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_ageTitle"
-                    app:layout_constraintEnd_toEndOf="@+id/txt_minister"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/txt_minister"
                     tools:text="@string/age" />
 
@@ -160,10 +189,10 @@
                     android:id="@+id/txt_constituency"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_constituencyTitle"
-                    app:layout_constraintEnd_toEndOf="@+id/txt_age"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/txt_age"
                     tools:text="@string/constituency" />
 
@@ -179,20 +208,41 @@
                     android:progressTint="#03A9F4"
                     android:stepSize="0.1"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_ratingTitle"
-                    app:layout_constraintStart_toStartOf="@+id/txt_constituency"
-                    app:layout_constraintTop_toTopOf="@+id/txt_ratingTitle"
+                    app:layout_constraintStart_toStartOf="@+id/txt_twitter"
                     tools:ignore="SpeakableTextPresentCheck" />
 
                 <TextView
                     android:id="@+id/txt_averageRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
                     android:textSize="11sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/rtb_average"
                     app:layout_constraintTop_toBottomOf="@+id/rtb_average"
                     tools:text="(0.0 rating)" />
+
+                <TextView
+                    android:id="@+id/txt_seatNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/txt_seatTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/txt_constituency" />
+
+                <TextView
+                    android:id="@+id/txt_twitter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/txt_twitterTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/txt_seatNumber"
+                    app:layout_constraintTop_toTopOf="@+id/txt_twitterTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

@@ -1,104 +1,118 @@
 package com.example.parliamentmembersapp.fragments
 
-import android.annotation.SuppressLint
-import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.forEach
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.parliamentmembersapp.R
+import com.example.parliamentmembersapp.adapters.HorizontalAdapter
+import com.example.parliamentmembersapp.adapters.MemberAdapter
 import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.constants.Constants
 import com.example.parliamentmembersapp.database.Member
-import com.example.parliamentmembersapp.repo.MembersRepo
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
-import java.util.*
+import com.example.parliamentmembersapp.viewmodels.MembersFragmentViewModel
+import kotlin.reflect.KFunction1
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Fragment in which members of the parliament are listed. Either all of them,
+* members of a party or members of a constituency. When a member is clicked, the app navigates
+* to the fragment that displays more detailed info of that member
+*/
 
 class MembersFragment : Fragment() {
 
-    private lateinit var viewModel: MembersViewModel
+    private lateinit var viewModel: MembersFragmentViewModel
     private lateinit var memberAdapter: MemberAdapter
+    private lateinit var orderAdapter: HorizontalAdapter
     private var currentMembers: List<Member> = listOf()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val binding = DataBindingUtil.inflate<MembersFragmentBinding>(
             inflater, R.layout.members_fragment, container, false
         )
 
-        viewModel = ViewModelProvider(this).get(MembersViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MembersFragmentViewModel::class.java)
 
+        //if the previous destination was a subgroup fragment, retrieving a string representing
+        //the item that was selected (a party or a constituency) and the type ("party"or "constituency")
         arguments?.let { bundle ->
-            val subgroup = bundle.get(Constants.KEY_SUBGROUP) as String
-            val type = bundle.get(Constants.KEY_SUBGROUP_TYPE) as String
-            viewModel.setSubgroup(subgroup, type)
+            retrieveSubgroup(bundle)
         }
 
-        setAdapter(binding)
+        //setting adapter for the recyclerView listing the members of parliament
+        setMemberAdapter(binding)
 
+        //setting adapter for the recyclerView which contains the sorting buttons
+        val orderCriteriaList = Constants.ORDER_LIST
+        setOrderAdapter(binding, orderCriteriaList)
+
+        //observing the livedata for the members required (either all the members or
+        //the members of a given party/constituency)
         viewModel.membersRequired.observe(viewLifecycleOwner, Observer { initialMembers ->
             val initialListSorted = viewModel.sortByFirst(initialMembers)
-            var membersDisplayed = viewModel.sortByFirst(initialMembers)
+            var membersDisplayed = initialListSorted
             memberAdapter.updateMembers(membersDisplayed)
 
-            binding.btnFilterFirst.setOnClickListener {
-                membersDisplayed = viewModel.sortByFirst(memberAdapter.members)
-                memberAdapter.updateMembers(membersDisplayed)
+            //setting onClickListener for sorting of member list
+            orderAdapter.onItemClick = { orderCriteria, view ->
+                //getSorter() returns a sorting function according to the item of the
+                //order recyclerView that was clicked
+                val sorter: KFunction1<List<Member>, List<Member>> = getSorter(orderCriteria)
+                //the list of members is then updated by applying the sorter to it, which returns
+                //the sorted list
+                membersDisplayed = sortAndUpdate(memberAdapter.members, sorter)
+                changeToActiveColor(binding, view)
             }
 
-            binding.btnFilterLast.setOnClickListener {
-                membersDisplayed = viewModel.sortByLast(memberAdapter.members)
-                memberAdapter.updateMembers(membersDisplayed)
-            }
+            //setting searchView to filter member list according to query (first name,
+            //last name, constituency, party, birth year, seat number)
+            binding.searchView.setOnQueryTextListener(
+                OnQueryListener(memberAdapter, initialListSorted)
+            )
 
-            binding.btnFilterAge.setOnClickListener {
-                membersDisplayed = viewModel.sortByAge(memberAdapter.members)
-                memberAdapter.updateMembers(membersDisplayed)
+            //button to scroll to the top of the Member recyclerView
+            binding.fabToTop.setOnClickListener {
+                binding.rvMembers.scrollToPosition(0)
             }
-
-            binding.btnFilterConstituency.setOnClickListener {
-                membersDisplayed = viewModel.sortByConstituency(memberAdapter.members)
-                memberAdapter.updateMembers(membersDisplayed)
-            }
-
-            binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?) = false
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText.isNullOrBlank()) {
-                        memberAdapter.updateMembers(initialListSorted)
-                    } else {
-                        val filtered = initialListSorted.filter { member ->
-                            member.first.lowercase().contains(newText.lowercase())
-                                    || member.last.lowercase().contains(newText.lowercase())
-                                    || member.constituency.lowercase().contains(newText.lowercase())
-                                    || member.party.lowercase().contains(newText.lowercase())
-                                    || member.bornYear == newText.toIntOrNull()
-                                    || member.seatNumber == newText.toIntOrNull()
-                        }
-                        memberAdapter.updateMembers(filtered)
-                    }
-                    return false
-                }
-            })
         })
 
         return binding.root
     }
 
-    private fun setAdapter(binding: MembersFragmentBinding) {
+    //set the subgroup to be displayed
+    private fun retrieveSubgroup(bundle: Bundle) {
+        val subgroup = bundle.get(Constants.KEY_SUBGROUP) as String
+        val type = bundle.get(Constants.KEY_SUBGROUP_TYPE) as String
+        viewModel.setSubgroup(subgroup, type)
+    }
 
+    //setting up adapter for Member recyclerView with onClickListener
+    private fun setMemberAdapter(binding: MembersFragmentBinding) {
         memberAdapter = MemberAdapter(currentMembers).apply {
+            //defining the onItemClick function with the invoked (pre-determined)
+            //parameter Member. when an item in the RV is clicked,
+            //the app navigates to the details fragment and displays the chosen
+            //member's info according to its personNumber
             onItemClick = {
                 val bundle = bundleOf(Constants.KEY_PERSON_NUM to it.personNumber)
                 view?.findNavController()
@@ -110,91 +124,81 @@ class MembersFragment : Fragment() {
             adapter = memberAdapter
         }
     }
-}
 
-class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
-
-    var onItemClick: ((Member) -> Unit)? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.rv_cardview_member, parent, false)
-        return ViewHolder(v)
+    //set adapter for sorting buttons recyclerView
+    private fun setOrderAdapter(binding: MembersFragmentBinding, orderCriteriaList: List<String>) {
+        orderAdapter = HorizontalAdapter(orderCriteriaList)
+        binding.rvOrder.apply {
+            layoutManager = LinearLayoutManager(
+                activity,
+                LinearLayoutManager.HORIZONTAL, false
+            )
+            adapter = orderAdapter
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val partyLogoId = getLogoId(members[position].party)
-        val minister = if (members[position].minister) "Minister" else "Member of Parliament"
-        val fullname = members[position].let { "${it.first} ${it.last}" }
-        val age = "${Calendar.getInstance().get(Calendar.YEAR) - members[position].bornYear} " +
-                "years old"
-        val picUrl = "https://avoindata.eduskunta.fi/${members[position].picture}"
-        val constituency = members[position].constituency
-        holder.logo.setImageResource(partyLogoId)
-        holder.name.text = fullname
-        holder.position.text = minister
-        holder.age.text = age
-        holder.constituency.text = constituency
-        Glide.with(MyApp.appContext)
-            .load(picUrl)
-            .into(holder.pic)
+    //change sorting button color to show it is the active one
+    private fun changeToActiveColor(binding: MembersFragmentBinding, view: View?) {
+        val defaultBackgroundColor = ContextCompat.getColor(
+            MyApp.appContext, R.color.light_grey
+        )
+        val activeBackgroundColor = ContextCompat.getColor(
+            MyApp.appContext, android.R.color.holo_blue_dark
+        )
+        binding.rvOrder.forEach {
+            (it as CardView).setCardBackgroundColor(defaultBackgroundColor)
+        }
+        (view as CardView).setCardBackgroundColor(activeBackgroundColor)
     }
 
-    override fun getItemCount() = members.size
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateMembers(newMembers: List<Member>) {
-        members = newMembers
-        notifyDataSetChanged()
+    //returns the sorting function required according to the string provided
+    private fun getSorter(orderCriteria: String) = when (orderCriteria) {
+        Constants.ORDER_FIRST -> viewModel::sortByFirst
+        Constants.ORDER_LAST -> viewModel::sortByLast
+        Constants.ORDER_AGE -> viewModel::sortByAge
+        Constants.ORDER_PARTY -> viewModel::sortByParty
+        Constants.ORDER_CONSTITUENCY -> viewModel::sortByConstituency
+        Constants.ORDER_POSITION -> viewModel::sortByPosition
+        else -> viewModel::sortBySeat
     }
 
-    private fun getLogoId(partyName: String): Int {
-        return MyApp.appContext.resources.getIdentifier(partyName,
-            "drawable", MyApp.appContext.packageName)
+    //higher order function to sort members and update the recyclerView
+    private fun sortAndUpdate(memberList: List<Member>, sorting: (List<Member>) -> List<Member>)
+            : List<Member> {
+        val sortedList = sorting(memberList)
+        memberAdapter.updateMembers(sortedList)
+        return sortedList
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var logo: ImageView = itemView.findViewById(R.id.img_logo)
-        var name: TextView = itemView.findViewById(R.id.txt_itemName)
-        var pic: ImageView = itemView.findViewById(R.id.img_profilePic)
-        var position: TextView = itemView.findViewById(R.id.txt_itemPosition)
-        var age: TextView = itemView.findViewById(R.id.txt_itemAge)
-        var constituency: TextView = itemView.findViewById(R.id.txt_itemConstituency)
-
-        init {
-            itemView.setOnClickListener {
-                onItemClick?.invoke(members[adapterPosition])
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: DAO for Member instances
+*/
+    class OnQueryListener(
+        private val memberAdapter: MemberAdapter,
+        private val initialListSorted: List<Member>
+    ) : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?) = false
+        override fun onQueryTextChange(newText: String?): Boolean {
+            //reset member list if searchView is empty
+            if (newText.isNullOrBlank()) {
+                memberAdapter.updateMembers(initialListSorted)
+            } else {
+                //filtering according to searchView input
+                val filtered = initialListSorted.filter { member ->
+                    member.first.lowercase().contains(newText.lowercase())
+                            || member.last.lowercase().contains(newText.lowercase())
+                            || member.constituency.lowercase().contains(newText.lowercase())
+                            || member.party.lowercase().contains(newText.lowercase())
+                            || member.bornYear == newText.toIntOrNull()
+                            || member.seatNumber == newText.toIntOrNull()
+                }
+                memberAdapter.updateMembers(filtered)
             }
+            return false
         }
     }
 }
 
-class MembersViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repo = MembersRepo
-    private val allMembers = repo.membersFromDB
-    private var subgroup: String? = null
-    private var subGroupType: String? = null
-    private val subgroupLiveData = Transformations.map(repo.membersFromDB)
-        { members -> members.filter { member ->
-            when (subGroupType) {
-                Constants.VAL_PARTIES -> member.party == subgroup
-                else -> member.constituency == subgroup
-            }
-        }}.distinctUntilChanged()
-    val membersRequired: LiveData<List<Member>>
-        get() = subgroup?.let { subgroupLiveData } ?: allMembers
-
-    fun setSubgroup(subgroupSelected: String, type: String) {
-        subgroup = subgroupSelected
-        subGroupType = type
-    }
-
-    fun sortByFirst(members: List<Member>) = members.sortedBy { it.first }
-
-    fun sortByLast(members: List<Member>) = members.sortedBy { it.last }
-
-    fun sortByAge(members: List<Member>) = members.sortedByDescending { it.bornYear }
-
-    fun sortByConstituency(members: List<Member>) = members.sortedBy { it.constituency }
-}

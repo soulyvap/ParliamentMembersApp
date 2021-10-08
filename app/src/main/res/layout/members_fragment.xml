@@ -12,17 +12,31 @@
         tools:context=".fragments.MembersFragment">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_order"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:scrollbars="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_orderBy" />
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_members"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_filterFirst">
+            app:layout_constraintTop_toBottomOf="@+id/rv_order">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -31,9 +45,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/rounded_border_dark"
+            android:iconifiedByDefault="false"
             android:queryHint="name, party, constituency, ..."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,57 +56,30 @@
 
         </SearchView>
 
-        <Button
-            android:id="@+id/btn_filterFirst"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <TextView
+            android:id="@+id/txt_orderBy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/firstname"
-            android:textAllCaps="false"
+            android:layout_marginTop="8dp"
+            android:text="@string/order_by"
             android:textSize="11sp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_filterLast"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/searchView"
             app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-        <Button
-            android:id="@+id/btn_filterLast"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_toTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/lastname"
-            android:textAllCaps="false"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_filterFirst"
-            app:layout_constraintEnd_toStartOf="@+id/btn_filterAge"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_filterFirst" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            app:backgroundTint="@color/ic_launcher_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_vertical_align_top_24"
+            android:contentDescription="@string/to_top"
+            android:focusable="true" />
 
-        <Button
-            android:id="@+id/btn_filterAge"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/age"
-            android:textAllCaps="false"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_filterLast"
-            app:layout_constraintEnd_toStartOf="@+id/btn_filterConstituency"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_filterLast" />
-
-        <Button
-            android:id="@+id/btn_filterConstituency"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/constituency"
-            android:textAllCaps="false"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_filterAge"
-            app:layout_constraintEnd_toEndOf="@+id/searchView"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_filterAge" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

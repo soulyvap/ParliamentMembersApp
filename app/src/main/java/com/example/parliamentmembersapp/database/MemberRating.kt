@@ -3,6 +3,16 @@ package com.example.parliamentmembersapp.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: Entity class that defines the properties of a comment about a Member
+* in the Room MemberDB
+*/
+
+//making sure one user can only rate a parliament member once by making the combination of
+//columns personNumber and author unique
 @Entity(indices = [Index(value = ["personNumber", "author"], unique = true)])
 class MemberRating(
     @PrimaryKey(autoGenerate = true)
@@ -11,6 +21,13 @@ class MemberRating(
     val rating: Double,
     val author: String
 )
+
+/*
+* Date:
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: DAO for MemberRating instances
+*/
 
 @Dao
 interface RatingDao {
