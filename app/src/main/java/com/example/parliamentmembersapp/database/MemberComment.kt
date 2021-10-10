@@ -5,7 +5,7 @@ import androidx.room.*
 import java.util.*
 
 /*
-* Date:
+* Date: 29.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Entity class that defines the properties of a Member rating in the Room MemberDB

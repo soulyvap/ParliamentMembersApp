@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 
 /*
-* Date:
+* Date: 29.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Entity class that defines the properties of a comment about a Member

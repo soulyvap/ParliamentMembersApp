@@ -1,30 +1,20 @@
 package com.example.parliamentmembersapp.activities
 
-import android.app.Activity
-import android.app.Application
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.example.parliamentmembersapp.R
-import com.example.parliamentmembersapp.constants.Constants
-import com.example.parliamentmembersapp.database.*
 import com.example.parliamentmembersapp.databinding.ActivityMainBinding
 import com.example.parliamentmembersapp.viewmodels.MainActivityViewModel
 
 /*
-* Date:
+* Date: 21.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Launcher activity which contains the navHost for all the fragments and
@@ -41,9 +31,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-
-        //setting up the work manager to update the data base every time the app is launched
-        viewModel.setWorkManager(this, this)
 
         //verifying if a user name has been setup yet (first launch) then starting the
         //welcome activity if it has not

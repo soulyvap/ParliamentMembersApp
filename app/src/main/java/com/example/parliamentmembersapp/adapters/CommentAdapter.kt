@@ -9,7 +9,7 @@ import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.database.MemberComment
 
 /*
-* Date:
+* Date: 29.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: RecyclerView adapter for displaying comments about MPs

@@ -15,7 +15,7 @@ import com.example.parliamentmembersapp.databinding.OptionsFragmentBinding
 import com.example.parliamentmembersapp.viewmodels.OptionsFragmentViewModel
 
 /*
-* Date:
+* Date: 21.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Fragment where the user selects what they want to see (parties, constituency,

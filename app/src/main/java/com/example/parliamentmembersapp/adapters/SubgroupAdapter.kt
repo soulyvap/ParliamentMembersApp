@@ -11,13 +11,13 @@ import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.constants.Constants
 
 /*
-* Date:
+* Date: 25.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: RecyclerView adapter for displaying a list of parties or constituencies
 */
 
-class SubgroupAdapter(private val subgroupList: List<String>, private val subgroupName: String):
+class SubgroupAdapter(private val subgroupsList: List<String>, private val subgroupName: String):
     RecyclerView.Adapter<SubgroupAdapter.ViewHolder>() {
 
     //function type instance to handle recyclerView itemView onClick events
@@ -33,13 +33,24 @@ class SubgroupAdapter(private val subgroupList: List<String>, private val subgro
     //if constituencies are displayed, show their name
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (subgroupName) {
-            Constants.VAL_PARTIES -> holder.logo
-                .setImageResource(getLogoIdByName(subgroupList[position]))
-            else -> holder.constituency.text = subgroupList[position]
+            Constants.VAL_PARTIES -> {
+                val logoID = getLogoIdByName(subgroupsList[position])
+                if (logoID == 0) {
+                    holder.subgroupName.text = subgroupsList[position].uppercase()
+                } else {
+                    holder.logo.setImageResource(logoID)
+                }
+            }
+            else -> holder.subgroupName.text = subgroupsList[position]
+        }
+
+        //setting onClickListener for onItemClick to invoke the clicked item
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(subgroupsList[position])
         }
     }
 
-    override fun getItemCount() = subgroupList.size
+    override fun getItemCount() = subgroupsList.size
 
     //method to get a drawable's id by its file name
     private fun getLogoIdByName(partyName: String): Int {
@@ -49,14 +60,6 @@ class SubgroupAdapter(private val subgroupList: List<String>, private val subgro
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var logo: ImageView = itemView.findViewById(R.id.img_partyLogo)
-        var constituency: TextView = itemView.findViewById(R.id.txt_subConstituency)
-
-        init {
-            //invoking the string corresponding to the item clicked so that it can
-            //be used in the fragment (pre-defining the function parameter)
-            itemView.setOnClickListener {
-                onItemClick?.invoke(subgroupList[adapterPosition])
-            }
-        }
+        var subgroupName: TextView = itemView.findViewById(R.id.txt_subgroup)
     }
 }

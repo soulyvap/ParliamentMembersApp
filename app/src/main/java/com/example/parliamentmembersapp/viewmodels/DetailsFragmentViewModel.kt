@@ -19,6 +19,14 @@ import com.example.parliamentmembersapp.repos.RatingsRepo
 import kotlinx.coroutines.launch
 import java.util.*
 
+/*
+* Date: 21.8.2021
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: ViewModel for DetailsFragment. Contains references to repos, livedata as well as
+* the personNumber of the member to be displayed and the current user's username.
+*/
+
 class DetailsFragmentViewModel(application: Application): AndroidViewModel(application){
 
     private val memberRepo = MembersRepo
@@ -64,7 +72,7 @@ class DetailsFragmentViewModel(application: Application): AndroidViewModel(appli
             )
         } }
 
-    //all the functions to get the data to update the member info UI
+    //all the functions to get the data needed to update the member info UI
     fun getPicUrl(member: Member) = "https://avoindata.eduskunta.fi/${member.picture}"
     fun getMinister(member: Member) = if (member.minister) "Minister" else "Member Of Parliament"
     fun getName(member: Member) = "${member.first} ${member.last}"

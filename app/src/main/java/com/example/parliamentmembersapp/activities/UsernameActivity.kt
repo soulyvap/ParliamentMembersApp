@@ -11,7 +11,7 @@ import com.example.parliamentmembersapp.databinding.ActivityUsernameBinding
 import com.example.parliamentmembersapp.viewmodels.UsernameActivityViewModel
 
 /*
-* Date:
+* Date: 30.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Activity in which the user can set/change their username

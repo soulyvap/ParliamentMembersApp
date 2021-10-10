@@ -4,7 +4,7 @@ import com.example.parliamentmembersapp.database.MemberDB
 import com.example.parliamentmembersapp.database.MemberRating
 
 /*
-* Date:
+* Date: 29.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Repository to handles queries for ratings in the MemberDB

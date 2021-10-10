@@ -8,7 +8,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 
 /*
-* Date:
+* Date: 22.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Api service for fetching information about MPs as a list of Member objects from the

@@ -14,7 +14,7 @@ import com.example.parliamentmembersapp.database.Member
 import java.util.*
 
 /*
-* Date:
+* Date: 27.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: RecyclerView adapter for displaying a list of parliament members with clickable items
@@ -48,6 +48,12 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
         Glide.with(MyApp.appContext)
             .load(picUrl)
             .into(holder.pic)
+
+        //set onClickListener for onItemClick to invoke the clicked member (make it available
+        //to use in Fragment)
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(members[position])
+        }
     }
 
     override fun getItemCount() = members.size
@@ -72,13 +78,5 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
         var position: TextView = itemView.findViewById(R.id.txt_itemPosition)
         var age: TextView = itemView.findViewById(R.id.txt_itemAge)
         var constituency: TextView = itemView.findViewById(R.id.txt_itemConstituency)
-
-        init {
-            //invoking the Member instance corresponding to the item clicked so that it can
-            //be used later in the fragment (pre-defining the function parameter)
-            itemView.setOnClickListener {
-                onItemClick?.invoke(members[adapterPosition])
-            }
-        }
     }
 }

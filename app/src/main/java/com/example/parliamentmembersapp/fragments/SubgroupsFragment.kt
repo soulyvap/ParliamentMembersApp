@@ -18,7 +18,7 @@ import com.example.parliamentmembersapp.databinding.SubgroupsFragmentBinding
 import com.example.parliamentmembersapp.viewmodels.SubgroupsFragmentViewModel
 
 /*
-* Date:
+* Date: 21.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Fragment that displays all parties or constituencies (according to the users choice)

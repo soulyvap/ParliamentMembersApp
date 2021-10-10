@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 
 /*
-* Date:
+* Date: 22.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Entity class that defines the properties of a Member in the Room MemberDB
@@ -38,7 +38,7 @@ interface MemberDao {
     suspend fun insert(member: Member)
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(members: Set<Member>)
-    @Query("select * from Member order by party")
+    @Query("select * from Member order by first")
     fun getAll(): LiveData<List<Member>>
     @Query("select * from Member where party = :party")
     fun getMembersByParty(party: String): LiveData<List<Member>>

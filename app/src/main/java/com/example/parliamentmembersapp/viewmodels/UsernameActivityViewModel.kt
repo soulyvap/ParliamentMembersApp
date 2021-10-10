@@ -8,6 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.parliamentmembersapp.constants.Constants
 import kotlinx.coroutines.launch
 
+/*
+* Date: 30.9.2021
+* Name: Soulyvanh Phetsarath
+* ID: 2012208
+* Description: ViewModel for UsernameActivity. Contains methods to retrieve a username from
+* shared preferences or save a new one into it.
+*/
+
 class UsernameActivityViewModel(application: Application): AndroidViewModel(application) {
 
     //saving username into shared preferences

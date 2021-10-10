@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import com.example.parliamentmembersapp.classes.MyApp
 
 /*
-* Date:
+* Date: 22.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Room database containing 3 tables: information about MP's, MP ratings and comments

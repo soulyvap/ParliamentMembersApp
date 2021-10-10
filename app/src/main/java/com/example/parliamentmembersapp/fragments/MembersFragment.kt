@@ -16,6 +16,7 @@ import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.adapters.HorizontalAdapter
 import com.example.parliamentmembersapp.adapters.MemberAdapter
@@ -27,7 +28,7 @@ import com.example.parliamentmembersapp.viewmodels.MembersFragmentViewModel
 import kotlin.reflect.KFunction1
 
 /*
-* Date:
+* Date: 21.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Fragment in which members of the parliament are listed. Either all of them,
@@ -74,14 +75,13 @@ class MembersFragment : Fragment() {
             memberAdapter.updateMembers(membersDisplayed)
 
             //setting onClickListener for sorting of member list
-            orderAdapter.onItemClick = { orderCriteria, view ->
+            orderAdapter.onItemClick = { orderCriteria ->
                 //getSorter() returns a sorting function according to the item of the
                 //order recyclerView that was clicked
                 val sorter: KFunction1<List<Member>, List<Member>> = getSorter(orderCriteria)
                 //the list of members is then updated by applying the sorter to it, which returns
                 //the sorted list
                 membersDisplayed = sortAndUpdate(memberAdapter.members, sorter)
-                changeToActiveColor(binding, view)
             }
 
             //setting searchView to filter member list according to query (first name,
@@ -94,6 +94,20 @@ class MembersFragment : Fragment() {
             binding.fabToTop.setOnClickListener {
                 binding.rvMembers.scrollToPosition(0)
             }
+
+            //handling the pull down gesture on the recyclerView to refresh list.
+            //The database is updated with
+            binding.rlMembers.setOnRefreshListener {
+                viewModel.updateDB()
+            }
+
+            viewModel.refreshed.observe(viewLifecycleOwner, Observer { it ->
+                if (it) {
+                    binding.rlMembers.isRefreshing = false
+                    Toast.makeText(activity, "List refreshed", Toast.LENGTH_SHORT).show()
+                    viewModel.setRefreshed(false)
+                }
+            })
         })
 
         return binding.root
@@ -135,20 +149,6 @@ class MembersFragment : Fragment() {
             )
             adapter = orderAdapter
         }
-    }
-
-    //change sorting button color to show it is the active one
-    private fun changeToActiveColor(binding: MembersFragmentBinding, view: View?) {
-        val defaultBackgroundColor = ContextCompat.getColor(
-            MyApp.appContext, R.color.light_grey
-        )
-        val activeBackgroundColor = ContextCompat.getColor(
-            MyApp.appContext, android.R.color.holo_blue_dark
-        )
-        binding.rvOrder.forEach {
-            (it as CardView).setCardBackgroundColor(defaultBackgroundColor)
-        }
-        (view as CardView).setCardBackgroundColor(activeBackgroundColor)
     }
 
     //returns the sorting function required according to the string provided

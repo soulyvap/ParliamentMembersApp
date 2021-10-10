@@ -8,7 +8,7 @@ import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.databinding.ActivityWelcomeBinding
 
 /*
-* Date:
+* Date: 30.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Activity that welcomes the user and gives a short description of the app.

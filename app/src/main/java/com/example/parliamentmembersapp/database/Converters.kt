@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import java.util.*
 
 /*
-* Date:
+* Date: 24.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Converters for handling data types that are not supported in a Room DB.

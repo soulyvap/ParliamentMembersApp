@@ -21,7 +21,7 @@ import com.example.parliamentmembersapp.databinding.DetailsFragmentBinding
 import com.example.parliamentmembersapp.viewmodels.DetailsFragmentViewModel
 
 /*
-* Date:
+* Date: 21.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: Fragment that displays the detailed information of an MP. The user can also
