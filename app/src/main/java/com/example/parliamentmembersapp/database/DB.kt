@@ -21,13 +21,11 @@ abstract class MemberDB: RoomDatabase() {
     abstract val memberDao: MemberDao
     abstract val ratingDao: RatingDao
     abstract val commentDao: CommentDao
-    companion object {
 
+    companion object {
         @Volatile
         private var INSTANCE: MemberDB? = null
-
         fun getInstance(): MemberDB {
-
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {

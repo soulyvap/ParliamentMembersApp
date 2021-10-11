@@ -6,21 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.forEach
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import com.example.parliamentmembersapp.R
 import com.example.parliamentmembersapp.adapters.HorizontalAdapter
 import com.example.parliamentmembersapp.adapters.MemberAdapter
-import com.example.parliamentmembersapp.classes.MyApp
 import com.example.parliamentmembersapp.constants.Constants
 import com.example.parliamentmembersapp.database.Member
 import com.example.parliamentmembersapp.databinding.MembersFragmentBinding
@@ -78,9 +72,9 @@ class MembersFragment : Fragment() {
             orderAdapter.onItemClick = { orderCriteria ->
                 //getSorter() returns a sorting function according to the item of the
                 //order recyclerView that was clicked
-                val sorter: KFunction1<List<Member>, List<Member>> = getSorter(orderCriteria)
-                //the list of members is then updated by applying the sorter to it, which returns
-                //the sorted list
+                val sorter = getSorter(orderCriteria)
+                //the list of members is then updated by applying the sorter to it,
+                //which returns the sorted list
                 membersDisplayed = sortAndUpdate(memberAdapter.members, sorter)
             }
 
@@ -101,8 +95,9 @@ class MembersFragment : Fragment() {
                 viewModel.updateDB()
             }
 
-            viewModel.refreshed.observe(viewLifecycleOwner, Observer { it ->
-                if (it) {
+            //stop the refresh animation if the database was updated successfully
+            viewModel.refreshed.observe(viewLifecycleOwner, Observer { refreshed ->
+                if (refreshed) {
                     binding.rlMembers.isRefreshing = false
                     Toast.makeText(activity, "List refreshed", Toast.LENGTH_SHORT).show()
                     viewModel.setRefreshed(false)
@@ -123,10 +118,9 @@ class MembersFragment : Fragment() {
     //setting up adapter for Member recyclerView with onClickListener
     private fun setMemberAdapter(binding: MembersFragmentBinding) {
         memberAdapter = MemberAdapter(currentMembers).apply {
-            //defining the onItemClick function with the invoked (pre-determined)
-            //parameter Member. when an item in the RV is clicked,
-            //the app navigates to the details fragment and displays the chosen
-            //member's info according to its personNumber
+            //defining the onItemClick function with the invoked (pre-determined) parameter Member.
+            //when an item in the RV is clicked, the app navigates to the details fragment
+            //and displays the chosen member's info according to its personNumber
             onItemClick = {
                 val bundle = bundleOf(Constants.KEY_PERSON_NUM to it.personNumber)
                 view?.findNavController()
@@ -143,10 +137,8 @@ class MembersFragment : Fragment() {
     private fun setOrderAdapter(binding: MembersFragmentBinding, orderCriteriaList: List<String>) {
         orderAdapter = HorizontalAdapter(orderCriteriaList)
         binding.rvOrder.apply {
-            layoutManager = LinearLayoutManager(
-                activity,
-                LinearLayoutManager.HORIZONTAL, false
-            )
+            layoutManager = LinearLayoutManager(activity,
+                LinearLayoutManager.HORIZONTAL, false)
             adapter = orderAdapter
         }
     }

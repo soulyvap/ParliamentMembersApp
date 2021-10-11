@@ -17,9 +17,8 @@ import com.example.parliamentmembersapp.viewmodels.MainActivityViewModel
 * Date: 21.8.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
-* Description: Launcher activity which contains the navHost for all the fragments and
-* the workManager for updating the Member local database. On first launch, the user
-* is redirected to the Welcome Activity.
+* Description: Launcher activity which contains the navHost for all the fragments.
+* On first launch, the user is redirected to the Welcome Activity.
 */
 
 class MainActivity : AppCompatActivity() {
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    //setting up the up button
+    //setting the up button
     override fun onSupportNavigateUp(): Boolean {
         val navController = this.findNavController(R.id.fragCont_navHost)
         return navController.navigateUp()

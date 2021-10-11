@@ -57,8 +57,9 @@ class SubgroupsFragment : Fragment() {
                     //when an item in the RV is clicked, a bundle is sent with 2 pairs:
                     //the name of the party/constituency and the type of subgroup it belongs to
                     onItemClick = { subgroupName ->
-                        val bundle = bundleOf(Constants.KEY_SUBGROUP to subgroupName,
-                        Constants.KEY_SUBGROUP_TYPE to subgroup)
+                        val bundle = bundleOf(
+                            Constants.KEY_SUBGROUP to subgroupName,
+                            Constants.KEY_SUBGROUP_TYPE to subgroup)
                         view?.findNavController()
                             ?.navigate(R.id.action_subgroupsFragment_to_membersFragment, bundle)
                     }

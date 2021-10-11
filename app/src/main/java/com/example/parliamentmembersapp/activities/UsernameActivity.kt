@@ -14,7 +14,8 @@ import com.example.parliamentmembersapp.viewmodels.UsernameActivityViewModel
 * Date: 30.9.2021
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
-* Description: Activity in which the user can set/change their username
+* Description: Activity in which the user can set/change their username.
+* Simulating a multi-user app
 */
 
 class UsernameActivity : AppCompatActivity() {
@@ -43,7 +44,8 @@ class UsernameActivity : AppCompatActivity() {
                 }
                 finish()
             } else {
-                Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }

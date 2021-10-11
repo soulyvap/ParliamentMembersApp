@@ -27,11 +27,10 @@ class MyApp: Application() {
         super.onCreate()
         appContext = applicationContext
 
-        //WorkManager that updates the MemberDB every 15 min
-        val updateDbWork = PeriodicWorkRequestBuilder<DBUpdater>(15, TimeUnit.MINUTES)
-            .build()
+        //WorkManager that updates the MemberDB every 30 min
+        val updateDbWork = PeriodicWorkRequestBuilder<DBUpdater>(
+            30, TimeUnit.MINUTES).build()
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "DBUpdater", ExistingPeriodicWorkPolicy.KEEP,
-            updateDbWork)
+            "DBUpdater", ExistingPeriodicWorkPolicy.KEEP, updateDbWork)
     }
 }

@@ -20,7 +20,8 @@ import java.util.*
 * Description: RecyclerView adapter for displaying a list of parliament members with clickable items
 */
 
-class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
+class MemberAdapter(var members: List<Member>)
+    : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
 
     //function type instance to handle RV itemView click events
     var onItemClick: ((Member) -> Unit)? = null
@@ -44,7 +45,7 @@ class MemberAdapter(var members: List<Member>) : RecyclerView.Adapter<MemberAdap
         holder.position.text = minister
         holder.age.text = age
         holder.constituency.text = constituency
-        //Glide handles the display and caching of a picture fetched online
+        //Glide handles the displaying and caching of a picture fetched online
         Glide.with(MyApp.appContext)
             .load(picUrl)
             .into(holder.pic)

@@ -29,7 +29,7 @@ class SubgroupAdapter(private val subgroupsList: List<String>, private val subgr
         return ViewHolder(v)
     }
 
-    //if parties are displayed, show the logo.
+    //if parties are displayed, show their logo when it is available, else their name.
     //if constituencies are displayed, show their name
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (subgroupName) {

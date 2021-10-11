@@ -48,6 +48,18 @@ class DetailsFragment : Fragment() {
         viewModel.setPersonNumber(arguments)
         viewModel.retrieveUsername(activity)
 
+
+
+        //observing the displayed member's info from the DB and updating the UI
+        viewModel.memberDisplayed.observe(viewLifecycleOwner, Observer{ member ->
+            member?.let { updateMemberInfo(it, binding) }
+        })
+
+        //observing the displayed member's ratings and displaying member's average rating
+        viewModel.ratings.observe(viewLifecycleOwner, Observer{ ratings ->
+            updateAverageRating(ratings, binding)
+        })
+
         //setting up the adapter for the comments recyclerView
         val commentAdapter = CommentAdapter(comments)
         binding.rvComments.apply {
@@ -55,23 +67,13 @@ class DetailsFragment : Fragment() {
             adapter = commentAdapter
         }
 
-        //observing the displayed member's info from the DB and updating the UI
-        viewModel.memberDisplayed.observe(viewLifecycleOwner, Observer{ member ->
-            member?.let { updateMemberInfo(member, binding) }
-        })
-
-        //observing the displayed member's ratings and displaying their average rating
-        viewModel.ratings.observe(viewLifecycleOwner, Observer{ ratings ->
-            updateAverageRating(ratings, binding)
-        })
-
         //observing the displayed member's comments and updating the comments recyclerView
         viewModel.comments.observe(viewLifecycleOwner, Observer{ comments ->
             updateComments(comments, binding, commentAdapter)
         })
 
         //adding/modifying a rating to the rating table in DB for the displayed member
-        //one user can only have one rating per member, but it can be replaced
+        //one user can only have one rating per member, but it can be updated
         binding.btnSubmitRating.setOnClickListener {
             viewModel.addRating(binding.rtbNewRating.rating.toDouble())
         }

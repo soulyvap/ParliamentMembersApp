@@ -1,6 +1,5 @@
 package com.example.parliamentmembersapp.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,30 +41,26 @@ class HorizontalAdapter(private val orderCriteria: List<String>)
         holder.orderCriterion.text = orderCriteria[position]
 
         //change the color of the first element to show that it is active
-        cardViewList[0].setCardBackgroundColor(
-            ContextCompat.getColor(MyApp.appContext, android.R.color.holo_blue_dark))
+        if (position == 0) {
+            holder.itemView.setCardBackgroundColor(
+                ContextCompat.getColor(MyApp.appContext, android.R.color.holo_blue_dark))
+        }
 
         //setting list item onClickListener, invoking the String that was clicked
         //switching the color of the clicked element to show which one was clicked last
         holder.itemView.setOnClickListener { view ->
             onItemClick?.invoke(orderCriteria[position])
-            switchActiveSortingColor(view)
+            switchActiveItemColor(view)
         }
     }
 
-    private fun switchActiveSortingColor(view: View?) {
+    private fun switchActiveItemColor(view: View?) {
         cardViewList.forEach {
-            it.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    MyApp.appContext, R.color.light_grey
-                )
-            )
+            it.setCardBackgroundColor(ContextCompat.getColor(
+                    MyApp.appContext, R.color.light_grey))
         }
-        (view as CardView).setCardBackgroundColor(
-            ContextCompat.getColor(
-                MyApp.appContext, android.R.color.holo_blue_dark
-            )
-        )
+        (view as CardView).setCardBackgroundColor(ContextCompat.getColor(
+                MyApp.appContext, android.R.color.holo_blue_dark))
     }
 
     override fun getItemCount() = orderCriteria.size

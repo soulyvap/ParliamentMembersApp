@@ -28,13 +28,13 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-//setting up getter and data fetching function
+//getter and data fetching function
 interface MemberApiService {
     @GET("mps.json")
     suspend fun getMemberRecords(): List<Member>
 }
 
-//creating retrofit service
+//retrofit service
 object MemberApi {
     val retrofitService : MemberApiService by lazy {
         retrofit.create(MemberApiService::class.java) }

@@ -11,7 +11,7 @@ import com.example.parliamentmembersapp.constants.Constants
 * Name: Soulyvanh Phetsarath
 * ID: 2012208
 * Description: ViewModel for MainActivity. Contains methods to check whether a username has
-* been set and set up the work manager which schedules updates the MembersDB from the API
+* been set already
 */
 
 class MainActivityViewModel(application: Application): AndroidViewModel(application) {

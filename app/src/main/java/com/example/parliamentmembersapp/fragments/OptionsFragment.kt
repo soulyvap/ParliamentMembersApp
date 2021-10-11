@@ -36,7 +36,7 @@ class OptionsFragment : Fragment() {
         //on click, navigate to the subgroup fragment with a bundle that indicates that
         //parties should be listed in the next destination
         binding.btnParties.setOnClickListener {
-            val bundle = bundleOf(Pair(Constants.KEY_SUBGROUP, Constants.VAL_PARTIES))
+            val bundle = bundleOf(Constants.KEY_SUBGROUP to Constants.VAL_PARTIES)
             view?.findNavController()?.navigate(
                 R.id.action_mainFragment_to_subgroupsFragment, bundle)
         }
